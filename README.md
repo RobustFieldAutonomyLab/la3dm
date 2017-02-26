@@ -1,10 +1,10 @@
 # Learning-Aided 3D Mapping
----
+-
 
 A suite of algorithms for learning-aided mapping. Includes implementations of Gaussian process regression and Bayesian generalized kernel inference for occupancy prediction using test-data octrees. This framework also contains the components necessary to run OctoMap as a baseline.
 
 ## Overview
----
+-
 
 This implementation as it stands now is primarily intended to enable replication of these methods over a few datasets. In addition to the implementation of relevant learning algorithms and data structures, we provide two sets of range data (sim_structured and sim_unstructured) collected in Gazebo for demonstration. Parameters of the sensors and environments are set in the relevant `yaml` files contained in the `config/datasets` directory, while configuration of parameters for the mapping methods can be found in `config/methods`.
 
@@ -34,7 +34,7 @@ month={May},
 ```
 
 ## Getting Started
----
+-
 
 ### Dependencies
 
@@ -53,7 +53,7 @@ my_catkin_workspace$ catkin_make
 ```
 
 ## Running the Demo
----
+-
 
 To run the demo on the `sim_structured` environment, simply run:
 
