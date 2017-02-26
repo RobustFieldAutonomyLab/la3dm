@@ -1,0 +1,51 @@
+<launch>
+    <!-- bgkoctomap_static -->
+    <!-- Sets up a BGKOctoMap node with parameters specified by args -->
+    <!-- See bgkoctomap/config/methods/bgkoctomap.yaml for config parameters -->
+    <arg name="method" default="bgkoctomap"/>
+
+    <!-- <arg name="original_size" default="true"/> -->
+    <!-- <arg name="dir"/> -->
+    <!-- <arg name="prefix"/> -->
+    <!-- <arg name="scan_num"/> -->
+    <!-- <arg name="max_range" default="-1"/> -->
+    <!-- <arg name="min_z" default="0"/> -->
+    <!-- <arg name="max_z" default="0"/> -->
+
+
+    <!--
+        TODO
+        - allow dataset to be None
+        - if no dataset provided, should just listen for topic
+    -->
+    <!-- 
+        Choose world:
+        - sim_structured
+        - sim_unstructured
+     -->
+    <arg name="data" value="$(find la3dm)/data"/>
+
+    <arg name="dataset" default="sim_structured"/>
+    <arg name="dir" value="$(arg data)/$(arg dataset)"/>
+
+    <arg name="prefix" default="$(arg dataset)"/>
+
+    <arg name="method_config" value="$(find la3dm)/config/methods"/>
+    <arg name="data_config" value="$(find la3dm)/config/datasets/"/>
+
+    <!--Start the BGKOctoMap node -->
+    <node pkg="la3dm" type="$(arg method)_static_node" name="bgkoctomap" output="screen">
+
+
+        <param name="dir" value="$(arg dir)"/>
+        <param name="prefix" value="$(arg prefix)"/>
+
+        <!-- Load BGKOctoMap configuration from file -->
+        <rosparam file="$(arg method_config)/$(arg method).yaml" command="load"/>
+
+        <!-- Load dataset configuration from file -->
+        <rosparam file="$(arg data_config)/$(arg dataset).yaml" command="load"/>
+        
+    </node>
+
+</launch>
