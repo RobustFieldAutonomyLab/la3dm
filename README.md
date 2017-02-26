@@ -32,3 +32,43 @@ year={2017},
 month={May},
 }
 ```
+
+## Getting Started
+---
+
+### Dependencies
+
+```bash
+$ sudo apt-get install ros-kinetic-octomap*
+```
+
+### Build with Catkin
+
+The repository is set up to work with catkin, so to get started you can clone the repository and compile with `catkin_make`:
+
+```bash
+my_catkin_workspace/src$ git clone https://github.com/RobustFieldAutonomyLab/la3dm
+my_catkin_workspace/src$ cd ..
+my_catkin_workspace$ catkin_make
+```
+
+## Running the Demo
+---
+
+To run the demo on the `sim_structured` environment, simply run:
+
+```bash
+$ roslaunch la3dm la3dm_static.launch
+```
+
+which by default will run using the BGKOctoMap method. If you want to try a different method or dataset, simply pass the
+name of the method or dataset as a parameter. For example, if you want to run standard OctoMap on the `sim_unstructured` map,
+you would run:
+
+```bash
+$ roslaunch la3dm la3dm static.launch method:=octomap dataset:=sim_unstructured
+```
+
+## Contributors
+
+Jinkun Wang and Kevin Doherty, [Robust Field Autonomy Lab (RFAL)](http://personal.stevens.edu/~benglot/index.html), Stevens Institute of Technology.
