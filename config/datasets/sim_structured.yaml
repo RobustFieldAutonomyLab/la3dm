@@ -11,4 +11,3 @@ max_z: 4.3
 original_size: true
 predict: false
 
-# <arg name="max_known_var" value="1" if="$(arg predict)"/>

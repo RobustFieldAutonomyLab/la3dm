@@ -1,7 +1,7 @@
-# sim_unstructured config
+# sim_structured_long_term config
 
 # Information about range-finder data
-scan_num: 12 # How many scans to use
+scan_num: 15 # How many scans to use
 max_range: 8 # Sensor max range (m)
 
 # Bounds on map height
