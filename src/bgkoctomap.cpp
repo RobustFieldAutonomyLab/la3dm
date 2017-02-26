@@ -17,14 +17,26 @@ std::cout << "Debug: " << msg << std::endl; }
 
 namespace la3dm {
 
-    BGKOctoMap::BGKOctoMap() : BGKOctoMap(0.1f, 4, 1.0, 1.0, 0.01, 100, 0.001f, 1000.0f, 0.02f, 0.3f, 0.7f, 1.0f, 1.0f, 1.0f) { }
+    BGKOctoMap::BGKOctoMap() : BGKOctoMap(0.1f, // resolution
+                                        4, // block_depth
+                                        1.0, // sf2
+                                        1.0, // ell
+                                        0.3f, // free_thresh
+                                        0.7f, // occupied_thresh
+                                        1.0f, // var_thresh
+                                        1.0f, // prior_A
+                                        1.0f // prior_B
+                                    ) { }
 
-    BGKOctoMap::BGKOctoMap(float resolution, unsigned short block_depth, float sf2, float ell, float noise, float l,
-                         float min_var,
-                         float max_var, float max_known_var, float free_thresh, float occupied_thresh,
-                         float var_thresh,
-                         float prior_A,
-                         float prior_B)
+    BGKOctoMap::BGKOctoMap(float resolution,
+                        unsigned short block_depth,
+                        float sf2,
+                        float ell,
+                        float free_thresh,
+                        float occupied_thresh,
+                        float var_thresh,
+                        float prior_A,
+                        float prior_B)
             : resolution(resolution), block_depth(block_depth),
               block_size((float) pow(2, block_depth - 1) * resolution) {
         Block::resolution = resolution;

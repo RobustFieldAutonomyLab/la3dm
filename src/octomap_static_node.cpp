@@ -74,33 +74,33 @@ int main(int argc, char **argv) {
     ROS_INFO_STREAM("Mapping finished in " << (end - start).toSec() << "s");
 
     ///////// Compute Frontiers /////////////////////
-    ROS_INFO_STREAM("Computing frontiers");
-    la3dm::MarkerArrayPub f_pub(nh, "frontier_map", resolution);
-    for (auto it = oc.begin_leafs(); it != oc.end_leafs(); ++it) {
-        if (oc.isNodeOccupied(*it))
-            continue;
+    // ROS_INFO_STREAM("Computing frontiers");
+    // la3dm::MarkerArrayPub f_pub(nh, "frontier_map", resolution);
+    // for (auto it = oc.begin_leafs(); it != oc.end_leafs(); ++it) {
+    //     if (oc.isNodeOccupied(*it))
+    //         continue;
 
-        if (it.getZ() > 1.0 || it.getZ() < 0.3)
-            continue;
+    //     if (it.getZ() > 1.0 || it.getZ() < 0.3)
+    //         continue;
 
-        octomap::OcTreeKey key = it.getKey();
-        octomap::OcTreeKey nkey;
-        int n_unknown = 0;
-        for (nkey[2] = key[2] - 1; nkey[2] <= key[2] + 1; ++nkey[2]) {
-            for (nkey[1] = key[1] - 1; nkey[1] <= key[1] + 1; ++nkey[1]){
-                for (nkey[0] = key[0] - 1; nkey[0] <= key[0] + 1; ++nkey[0]){
-                    if (key != nkey){
-                        octomap::OcTreeNode* node = oc.search(nkey);
-                        n_unknown += node == NULL;
-                    }
-                }
-            }
-        }
-        if (n_unknown >= 4) {
-            f_pub.insert_point3d(it.getX(), it.getY(), it.getZ());
-        }
-    }
-    f_pub.publish();
+    //     octomap::OcTreeKey key = it.getKey();
+    //     octomap::OcTreeKey nkey;
+    //     int n_unknown = 0;
+    //     for (nkey[2] = key[2] - 1; nkey[2] <= key[2] + 1; ++nkey[2]) {
+    //         for (nkey[1] = key[1] - 1; nkey[1] <= key[1] + 1; ++nkey[1]){
+    //             for (nkey[0] = key[0] - 1; nkey[0] <= key[0] + 1; ++nkey[0]){
+    //                 if (key != nkey){
+    //                     octomap::OcTreeNode* node = oc.search(nkey);
+    //                     n_unknown += node == NULL;
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     if (n_unknown >= 4) {
+    //         f_pub.insert_point3d(it.getX(), it.getY(), it.getZ());
+    //     }
+    // }
+    // f_pub.publish();
 
     ///////// Publish Map /////////////////////
     la3dm::MarkerArrayPub m_pub(nh, map_topic, resolution);

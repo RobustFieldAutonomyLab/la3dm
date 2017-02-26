@@ -47,12 +47,15 @@ namespace la3dm {
          * @param free_thresh free threshold for Occupancy probability (default 0.3)
          * @param occupied_thresh occupied threshold for Occupancy probability (default 0.7)
          */
-        BGKOctoMap(float resolution, unsigned short block_depth, float sf2, float ell, float noise, float l,
-                  float min_var,
-                  float max_var, float max_known_var, float free_thresh, float occupied_thresh,
-                  float var_thresh,
-                  float prior_A,
-                  float prior_B);
+        BGKOctoMap(float resolution,
+                unsigned short block_depth,
+                float sf2,
+                float ell,
+                float free_thresh,
+                float occupied_thresh,
+                float var_thresh,
+                float prior_A,
+                float prior_B);
 
         ~BGKOctoMap();
 

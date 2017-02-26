@@ -9,15 +9,6 @@ block_depth: 3 # Test-data octree depth (see Wang & Englot ICRA 2016)
 sf2: 10.0 # Actually sigma_0 in sparse kernel
 ell: 0.3 # Length scale of the sparse kernel
 
-# Old params from GP
-noise: 0.01 # From GP
-l: 100 # From GP
-
-# Variances
-max_var: 1000
-min_var: 0.001
-max_known_var: 0.02
-
 # Sampling resolutions
 free_resolution: 0.5 # Free space sampling resolution
 ds_resolution: 0.1 # Downsampling factor

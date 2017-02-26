@@ -28,11 +28,6 @@ int main(int argc, char **argv) {
     int block_depth = 4;
     double sf2 = 1.0;
     double ell = 1.0;
-    double noise = 0.01;
-    double l = 100;
-    double min_var = 0.001;
-    double max_var = 1000;
-    double max_known_var = 0.02;
     double free_resolution = 0.5;
     double ds_resolution = 0.1;
     double free_thresh = 0.3;
@@ -53,11 +48,6 @@ int main(int argc, char **argv) {
     nh.param<int>("block_depth", block_depth, block_depth);
     nh.param<double>("sf2", sf2, sf2);
     nh.param<double>("ell", ell, ell);
-    nh.param<double>("noise", noise, noise);
-    nh.param<double>("l", l, l);
-    nh.param<double>("min_var", min_var, min_var);
-    nh.param<double>("max_var", max_var, max_var);
-    nh.param<double>("max_known_var", max_known_var, max_known_var);
     nh.param<double>("free_resolution", free_resolution, free_resolution);
     nh.param<double>("ds_resolution", ds_resolution, ds_resolution);
     nh.param<double>("free_thresh", free_thresh, free_thresh);
@@ -79,10 +69,6 @@ int main(int argc, char **argv) {
             "block_depth: " << block_depth << std::endl <<
             "sf2: " << sf2 << std::endl <<
             "ell: " << ell << std::endl <<
-            "l: " << l << std::endl <<
-            "min_var: " << min_var << std::endl <<
-            "max_var: " << max_var << std::endl <<
-            "max_known_var: " << max_known_var << std::endl <<
             "free_resolution: " << free_resolution << std::endl <<
             "ds_resolution: " << ds_resolution << std::endl <<
             "free_thresh: " << free_thresh << std::endl <<
@@ -95,7 +81,7 @@ int main(int argc, char **argv) {
             "prior_B: " << prior_B
             );
 
-    la3dm::BGKOctoMap map(resolution, block_depth, sf2, ell, noise, l, min_var, max_var, max_known_var, free_thresh, occupied_thresh, var_thresh, prior_A, prior_B);
+    la3dm::BGKOctoMap map(resolution, block_depth, sf2, ell, free_thresh, occupied_thresh, var_thresh, prior_A, prior_B);
 
     ros::Time start = ros::Time::now();
     for (int scan_id = 1; scan_id <= scan_num; ++scan_id) {
