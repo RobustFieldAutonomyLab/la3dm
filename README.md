@@ -42,7 +42,7 @@ month={May},
 $ sudo apt-get install ros-kinetic-octomap*
 ```
 
-### Build with Catkin
+### Building with catkin
 
 The repository is set up to work with catkin, so to get started you can clone the repository and compile with `catkin_make`:
 
