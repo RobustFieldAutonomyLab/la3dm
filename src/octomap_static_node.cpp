@@ -60,10 +60,6 @@ int main(int argc, char **argv) {
 
     octomap::OcTree oc(resolution);
 
-    std::ofstream octomap_data;
-    std::string fname(dir + "/" + prefix + "_octomap.csv");
-    octomap_data.open(fname);
-
     ros::Time start = ros::Time::now();
     for (int scan_id = 1; scan_id <= scan_num; ++scan_id) {
         octomap::Pointcloud scan;
@@ -119,11 +115,6 @@ int main(int argc, char **argv) {
         }
     }
 
-    for (auto it = oc.begin_leafs(); it != oc.end_leafs(); ++it) {
-        octomap_data << it.getX() << "," << it.getY() << "," << it.getZ() << "," << it->getOccupancy() << "\n";
-    }
-
-    octomap_data.close();
     m_pub.publish();
     ros::spin();
 
