@@ -1,11 +1,11 @@
-#ifndef LA3DM_BLOCK_H
-#define LA3DM_BLOCK_H
+#ifndef LA3DM_GP_BLOCK_H
+#define LA3DM_GP_BLOCK_H
 
 #include <unordered_map>
 #include <array>
 #include "point3f.h"
-#include "octree_node.h"
-#include "octree.h"
+#include "gpoctree_node.h"
+#include "gpoctree.h"
 
 namespace la3dm {
 
@@ -53,7 +53,7 @@ namespace la3dm {
 
         friend ExtendedBlock get_extended_block(BlockHashKey key);
 
-        friend class BGKOctoMap;
+        friend class GPOctoMap;
 
     public:
         Block();
@@ -104,6 +104,7 @@ namespace la3dm {
 
         point3f center;
     };
+
 }
 
-#endif // LA3DM_BLOCK_H
+#endif // LA3DM_GP_BLOCK_H

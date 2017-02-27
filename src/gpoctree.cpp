@@ -1,9 +1,8 @@
-#include "octree.h"
+#include "gpoctree.h"
 
 #include <cmath>
 
 namespace la3dm {
-
     unsigned short OcTree::max_depth = 0;
 
     OcTreeHashKey node_to_hash_key(unsigned short depth, unsigned short index) {

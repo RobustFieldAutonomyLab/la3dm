@@ -1,10 +1,10 @@
-#ifndef LA3DM_OCTREE_H
-#define LA3DM_OCTREE_H
+#ifndef LA3DM_BGK_OCTREE_H
+#define LA3DM_BGK_OCTREE_H
 
 #include <stack>
 #include <vector>
 #include "point3f.h"
-#include "octree_node.h"
+#include "bgkoctree_node.h"
 
 namespace la3dm {
 
@@ -158,4 +158,4 @@ namespace la3dm {
     };
 }
 
-#endif // LA3DM_OCTREE_H
+#endif // LA3DM_BGK_OCTREE_H

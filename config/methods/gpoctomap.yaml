@@ -1,0 +1,24 @@
+# GPOctoMap config
+
+# Map topic, grid cell mininum resolution
+topic: /occupied_cells_vis_array
+resolution: 0.1
+block_depth: 3 # Test-data octree depth (see Wang & Englot ICRA 2016)
+
+# GP parameters
+sf2: 1.0
+ell: 1.0
+noise: 0.01
+l: 100
+max_var: 1000
+min_var: 0.001
+max_known_var: 0.02
+
+# Sampling resolutions
+free_resolution: 0.3 # Free space sampling resolution
+ds_resolution: 0.1 # Downsampling factor
+
+# Free/Occupied Thresholds
+free_thresh: free_thresh
+occupied_thresh: 0.7
+var_thresh: 1000.0 # Threshold on variance to distinguish known/unknown

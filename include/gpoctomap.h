@@ -1,29 +1,29 @@
-#ifndef LA3DM_BGK_OCTOMAP_H
-#define LA3DM_BGK_OCTOMAP_H
+#ifndef LA3DM_GP_OCTOMAP_H
+#define LA3DM_GP_OCTOMAP_H
 
 #include <unordered_map>
 #include <vector>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include "rtree.h"
-#include "bgkblock.h"
-#include "bgkoctree_node.h"
+#include "gpblock.h"
+#include "gpoctree_node.h"
 
 namespace la3dm {
-
     /// PCL PointCloud types as input
     typedef pcl::PointXYZ PCLPointType;
     typedef pcl::PointCloud<PCLPointType> PCLPointCloud;
 
     /*
-     * @brief BGKOctoMap
+     * @brief GPOctoMap
      *
-     * Bayesian Generalized Kernel Inference for Occupancy Map Prediction
-     * The space is partitioned by Blocks in which OcTrees with fixed
-     * depth are rooted. Occupancy values in one Block is predicted by 
-     * its ExtendedBlock via Bayesian generalized kernel inference.
+     * Fast, Accurate Gaussian Process Occupancy Maps via Test-Data Octrees
+     * and Nested Bayesian Fusion. The space is partitioned by Blocks
+     * in which OcTrees with fixed depth are rooted. The training part of GP
+     * is performed Block by Block with training data inside each Block.
+     * Occupancy values in one Block is predicted by its ExtendedBlock via BCM.
      */
-    class BGKOctoMap {
+    class GPOctoMap {
     public:
         /// Types used internally
         typedef std::vector<point3f> PointCloud;
@@ -32,7 +32,7 @@ namespace la3dm {
         typedef RTree<GPPointType *, float, 3, float> MyRTree;
 
     public:
-        BGKOctoMap();
+        GPOctoMap();
 
         /*
          * @param resolution (default 0.1m)
@@ -47,17 +47,11 @@ namespace la3dm {
          * @param free_thresh free threshold for Occupancy probability (default 0.3)
          * @param occupied_thresh occupied threshold for Occupancy probability (default 0.7)
          */
-        BGKOctoMap(float resolution,
-                unsigned short block_depth,
-                float sf2,
-                float ell,
-                float free_thresh,
-                float occupied_thresh,
-                float var_thresh,
-                float prior_A,
-                float prior_B);
+        GPOctoMap(float resolution, unsigned short block_depth, float sf2, float ell, float noise, float l,
+                  float min_var,
+                  float max_var, float max_known_var, float free_thresh, float occupied_thresh);
 
-        ~BGKOctoMap();
+        ~GPOctoMap();
 
         /// Set resolution.
         void set_resolution(float resolution);
@@ -72,7 +66,7 @@ namespace la3dm {
         inline float get_block_depth() const { return block_depth; }
 
         /*
-         * @brief Insert PCL PointCloud into BGKOctoMaps.
+         * @brief Insert PCL PointCloud into GPOctoMaps.
          * @param cloud one scan in PCLPointCloud format
          * @param origin sensor origin in the scan
          * @param ds_resolution downsampling resolution for PCL VoxelGrid filtering (-1 if no downsampling)
@@ -90,7 +84,7 @@ namespace la3dm {
 
         class RayCaster {
         public:
-            RayCaster(const BGKOctoMap *map, const point3f &start, const point3f &end) : map(map) {
+            RayCaster(const GPOctoMap *map, const point3f &start, const point3f &end) : map(map) {
                 assert(map != nullptr);
 
                 _block_key = block_to_hash_key(start);
@@ -202,7 +196,7 @@ namespace la3dm {
             }
 
         private:
-            const BGKOctoMap *map;
+            const GPOctoMap *map;
             Block *block;
             point3f block_lim;
             float block_size, resolution;
@@ -216,7 +210,7 @@ namespace la3dm {
         /// LeafIterator for iterating all leaf nodes in blocks
         class LeafIterator : public std::iterator<std::forward_iterator_tag, OcTreeNode> {
         public:
-            LeafIterator(const BGKOctoMap *map) {
+            LeafIterator(const GPOctoMap *map) {
                 assert(map != nullptr);
 
                 block_it = map->block_arr.cbegin();
@@ -379,4 +373,4 @@ namespace la3dm {
 
 }
 
-#endif // LA3DM_BGKOCTOMAP_H
+#endif // LA3DM_GP_OCTOMAP_H

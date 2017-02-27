@@ -1,4 +1,4 @@
-#include "octree_node.h"
+#include "bgkoctree_node.h"
 #include <cmath>
 
 namespace la3dm {

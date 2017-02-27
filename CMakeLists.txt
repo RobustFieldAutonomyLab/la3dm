@@ -100,7 +100,6 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES bgkoctomap
 #  CATKIN_DEPENDS geometry_msgs pcl_ros roscpp
 #  DEPENDS system_lib
 )
@@ -123,19 +122,25 @@ include_directories(
 #   src/${PROJECT_NAME}/bgkoctomap.cpp
 # )
 
-## Declare a cpp executable
-set(SOURCE_FILES src/block.cpp
+# Set relevant BGK source files
+set(BGK_SOURCE_FILES src/bgkblock.cpp
         src/bgkoctomap.cpp
-        # src/gpoctomap.cpp # Add back when gpoctomap integration is fixed
-        src/octree_node.cpp
-        src/octree.cpp
-        src/point3f.cpp)
-add_executable(bgkoctomap_static_node ${SOURCE_FILES}
+        src/bgkoctree_node.cpp
+        src/bgkoctree.cpp
+        src/point3f.cpp
+)
+
+set(GP_SOURCE_FILES src/gpblock.cpp
+        src/gpoctomap.cpp
+        src/gpoctree_node.cpp
+        src/gpoctree.cpp
+        src/point3f)
+
+add_executable(bgkoctomap_static_node ${BGK_SOURCE_FILES}
     src/bgkoctomap_static_node.cpp)
 
-# TODO - fix GPOctoMap integration
-# add_executable(gpoctomap_static_node ${SOURCE_FILES}
-    # src/gpoctomap_static_node.cpp)
+add_executable(gpoctomap_static_node ${GP_SOURCE_FILES}
+    src/gpoctomap_static_node.cpp)
 
 add_executable(octomap_static_node src/octomap_static_node.cpp)
 
@@ -156,9 +161,9 @@ target_link_libraries(bgkoctomap_static_node
         ${catkin_LIBRARIES}
 )
 
-# target_link_libraries(gpoctomap_static_node
-#         ${catkin_LIBRARIES}
-# )
+target_link_libraries(gpoctomap_static_node
+        ${catkin_LIBRARIES}
+)
 
 target_link_libraries(octomap_static_node
         ${catkin_LIBRARIES}

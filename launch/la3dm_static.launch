@@ -8,7 +8,6 @@
         Choose world:
         - sim_structured
         - sim_unstructured
-
      -->
     <arg name="data" value="$(find la3dm)/data"/>
 

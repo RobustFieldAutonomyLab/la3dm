@@ -1,5 +1,5 @@
-#ifndef LA3DM_OCCUPANCY_H
-#define LA3DM_OCCUPANCY_H
+#ifndef LA3DM_GP_OCCUPANCY_H
+#define LA3DM_GP_OCCUPANCY_H
 
 #include <iostream>
 #include <fstream>
@@ -12,10 +12,10 @@ namespace la3dm {
     };
 
     /*
-     * @brief Inference ouputs and occupancy state.
+     * @brief GP regression ouputs and occupancy state.
      *
-     * Occupancy has member variables: m_A and m_B (kernel densities of positive
-     * and negative class, respectively) and State.
+     * Occupancy has member variables: m_ivar (m*ivar), ivar (1/var) and State.
+     * This representation speeds up the updates via BCM.
      * Before using this class, set the static member variables first.
      */
     class Occupancy {
@@ -25,21 +25,21 @@ namespace la3dm {
 
         friend std::ifstream &operator>>(std::ifstream &is, Occupancy &oc);
 
-        friend class BGKOctoMap;
+        friend class GPOctoMap;
 
     public:
         /*
          * @brief Constructors and destructor.
          */
-        Occupancy() : m_A(Occupancy::prior_A), m_B(Occupancy::prior_B), state(State::UNKNOWN) { classified = false; }
+        Occupancy() : m_ivar(0.0), ivar(Occupancy::min_ivar), state(State::UNKNOWN) { }
 
-        Occupancy(float A, float B);
+        Occupancy(float m, float var);
 
-        Occupancy(const Occupancy &other) : m_A(other.m_A), m_B(other.m_B), state(other.state) { }
+        Occupancy(const Occupancy &other) : m_ivar(other.m_ivar), ivar(other.ivar), state(other.state) { }
 
         Occupancy &operator=(const Occupancy &other) {
-            m_A = other.m_A;
-            m_B = other.m_B;
+            m_ivar = other.m_ivar;
+            ivar = other.ivar;
             state = other.state;
             return *this;
         }
@@ -47,17 +47,17 @@ namespace la3dm {
         ~Occupancy() { }
 
         /*
-         * @brief Exact updates for nonparametric Bayesian kernel inference
-         * @param ybar kernel density estimate of positive class (occupied)
-         * @param kbar kernel density of negative class (unoccupied)
+         * @brief Bayesian Committee Machine (BCM) update for Gaussian Process regression.
+         * @param new_m mean resulted from GP regression
+         * @param new_var variance resulted from GP regression
          */
-        void update(float ybar, float kbar);
+        void update(float new_m, float new_var);
 
         /// Get probability of occupancy.
         float get_prob() const;
 
         /// Get variance of occupancy (uncertainty)
-        inline float get_var() const { return (m_A * m_B) / ( (m_A + m_B) * (m_A + m_B) * (m_A + m_B + 1.0f)); }
+        inline float get_var() const { return 1.0f / ivar; }
 
         /*
          * @brief Get occupancy state of the node.
@@ -73,25 +73,25 @@ namespace la3dm {
             return this->state != State::UNKNOWN && this->state == rhs.state;
         }
 
-        bool classified;
-
     private:
-        float m_A;
-        float m_B;
+        float m_ivar;  // m / var or m * ivar
+        float ivar;    // 1.0 / var
         State state;
 
-        static float sf2;
+        static float sf2;   // signal variance
         static float ell;   // length-scale
+        static float noise; // noise variance
+        static float l;     // gamma in logistic functions
 
-        static float prior_A; // prior on alpha
-        static float prior_B; // prior on beta
+        static float max_ivar; // minimum variance
+        static float min_ivar; // maximum variance
+        static float min_known_ivar;  // maximum variance for nodes to be considered as FREE or OCCUPIED
 
         static float free_thresh;     // FREE occupancy threshold
         static float occupied_thresh; // OCCUPIED occupancy threshold
-        static float var_thresh;
     };
 
     typedef Occupancy OcTreeNode;
 }
 
-#endif // LA3DM_OCCUPANCY_H
+#endif // LA3DM_GP_OCCUPANCY_H

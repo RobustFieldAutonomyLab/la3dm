@@ -1,4 +1,4 @@
-#include "block.h"
+#include "bgkblock.h"
 #include <queue>
 #include <algorithm>
 
