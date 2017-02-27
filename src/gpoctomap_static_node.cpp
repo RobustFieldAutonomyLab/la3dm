@@ -102,20 +102,20 @@ int main(int argc, char **argv) {
     ROS_INFO_STREAM("Mapping finished in " << (end - start).toSec() << "s");
 
     ///////// Compute Frontiers /////////////////////
-    ROS_INFO_STREAM("Computing frontiers");
-    la3dm::MarkerArrayPub f_pub(nh, "frontier_map", resolution);
-    for (auto it = map.begin_leaf(); it != map.end_leaf(); ++it) {
-        la3dm::point3f p = it.get_loc();
-        if (p.z() > 1.0 || p.z() < 0.3)
-            continue;
+    // ROS_INFO_STREAM("Computing frontiers");
+    // la3dm::MarkerArrayPub f_pub(nh, "frontier_map", resolution);
+    // for (auto it = map.begin_leaf(); it != map.end_leaf(); ++it) {
+    //     la3dm::point3f p = it.get_loc();
+    //     if (p.z() > 1.0 || p.z() < 0.3)
+    //         continue;
 
 
-        if (it.get_node().get_var() > 0.02 &&
-            it.get_node().get_prob() < 0.3) {
-            f_pub.insert_point3d(p.x(), p.y(), p.z());
-        }
-    }
-    f_pub.publish();
+    //     if (it.get_node().get_var() > 0.02 &&
+    //         it.get_node().get_prob() < 0.3) {
+    //         f_pub.insert_point3d(p.x(), p.y(), p.z());
+    //     }
+    // }
+    // f_pub.publish();
 
     //////// Test Raytracing //////////////////
     la3dm::MarkerArrayPub ray_pub(nh, "/ray", resolution);
