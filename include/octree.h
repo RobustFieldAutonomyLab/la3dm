@@ -18,7 +18,7 @@ namespace la3dm {
     void hash_key_to_node(OcTreeHashKey key, unsigned short &depth, unsigned short &index);
 
     /*
-     * @brief A simple OcTree to organize GP occupancy data in one block.
+     * @brief A simple OcTree to organize occupancy data in one block.
      *
      * OcTree doesn't store positions of nodes in order to reduce memory usage.
      * The nodes in OcTrees are indexed by OcTreeHashKey which can be used to
