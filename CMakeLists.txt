@@ -112,9 +112,11 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+        include/gpoctomap
+        include/bgkoctomap
+        include/common
         ${catkin_INCLUDE_DIRS}
         ${OCTOMAP_INCLUDE_DIRS}
-        include
 )
 
 ## Declare a cpp library
@@ -122,27 +124,39 @@ include_directories(
 #   src/${PROJECT_NAME}/bgkoctomap.cpp
 # )
 
-# Set relevant BGK source files
-set(BGK_SOURCE_FILES src/bgkblock.cpp
-        src/bgkoctomap.cpp
-        src/bgkoctree_node.cpp
-        src/bgkoctree.cpp
-        src/point3f.cpp
+# Common source files
+set(COMMON_SOURCE_FILES src/common/point3f)
+
+# Files for BGK source
+set(BGK_SOURCE_FILES
+    src/bgkoctomap/bgkblock.cpp
+    src/bgkoctomap/bgkoctomap.cpp
+    src/bgkoctomap/bgkoctree_node.cpp
+    src/bgkoctomap/bgkoctree.cpp)
+
+
+# Files for GP source
+set(GP_SOURCE_FILES
+        src/gpoctomap/gpblock.cpp
+        src/gpoctomap/gpoctomap.cpp
+        src/gpoctomap/gpoctree_node.cpp
+        src/gpoctomap/gpoctree.cpp
 )
 
-set(GP_SOURCE_FILES src/gpblock.cpp
-        src/gpoctomap.cpp
-        src/gpoctree_node.cpp
-        src/gpoctree.cpp
-        src/point3f)
+add_executable(bgkoctomap_static_node 
+    ${BGK_SOURCE_FILES}
+    ${COMMON_SOURCE_FILES}
+    src/bgkoctomap/bgkoctomap_static_node.cpp
+)
 
-add_executable(bgkoctomap_static_node ${BGK_SOURCE_FILES}
-    src/bgkoctomap_static_node.cpp)
+add_executable(gpoctomap_static_node
+    ${GP_SOURCE_FILES}
+    ${COMMON_SOURCE_FILES}
+    src/gpoctomap/gpoctomap_static_node.cpp
+)
 
-add_executable(gpoctomap_static_node ${GP_SOURCE_FILES}
-    src/gpoctomap_static_node.cpp)
-
-add_executable(octomap_static_node src/octomap_static_node.cpp)
+add_executable(octomap_static_node
+    src/octomap/octomap_static_node.cpp)
 
 # add_executable(bgkoctomap_server ${SOURCE_FILES}
 #         src/bgkoctomap_server.cpp
