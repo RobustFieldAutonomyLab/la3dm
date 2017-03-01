@@ -17,29 +17,30 @@ env:
 before_install:
   - sudo sh -c "echo \"deb http://packages.ros.org/ros/ubuntu $ROS_CI_DESKTOP main\" > /etc/apt/sources.list.d/ros-latest.list"
   - wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
-  - sudo apt-get update -qq
-  - sudo apt-get install -y ros-$ROS_DISTRO-catkin
-  - source /opt/ros/$ROS_DISTRO/setup.bash
-  - sudo rosdep init
-  - rosdep update
+  - sudo apt-get update
+  - apt-cache search kinetic-catkin
+  # - sudo apt-get install -y ros-$ROS_DISTRO-catkin
+  # - source /opt/ros/$ROS_DISTRO/setup.bash
+  # - sudo rosdep init
+  # - rosdep update
 
 # Create catkin workspace and 
-install:
-  - mkdir -p ~/catkin_ws/src
-  - cd ~/catkin_ws/src
-  - catkin_init_workspace
-  - cd ~/catkin_ws
-  - catkin_make
-  - source devel/setup.bash
+# install:
+  # - mkdir -p ~/catkin_ws/src
+  # - cd ~/catkin_ws/src
+  # - catkin_init_workspace
+  # - cd ~/catkin_ws
+  # - catkin_make
+  # - source devel/setup.bash
   # Add package
-  - cd ~/catkin_ws/src
-  - ln -s $CI_SOURCE_PATH .
+  # - cd ~/catkin_ws/src
+  # - ln -s $CI_SOURCE_PATH .
 
 # Install dependencies
-before_script:
-  - sudo apt-get install ros-kinetic-octomap*
+# before_script:
+  # - sudo apt-get install ros-kinetic-octomap*
 
 # Build package
-script:
-  - cd ~/catkin_ws
-  - catkin_make
+# script:
+  # - cd ~/catkin_ws
+  # - catkin_make
