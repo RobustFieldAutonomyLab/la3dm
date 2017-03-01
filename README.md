@@ -1,4 +1,5 @@
 # Learning-Aided 3D Mapping
+[![Build Status](https://travis-ci.org/RobustFieldAutonomyLab/la3dm.svg?branch=master)](https://travis-ci.org/RobustFieldAutonomyLab/la3dm)
 
 A suite of algorithms for learning-aided mapping. Includes implementations of Gaussian process regression and Bayesian generalized kernel inference for occupancy prediction using test-data octrees. This framework also contains the components necessary to run OctoMap as a baseline.
 
