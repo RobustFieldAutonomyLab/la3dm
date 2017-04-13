@@ -244,9 +244,9 @@ int main(int argc, char **argv) {
                     "free_thresh: " << free_thresh << std::endl <<
                     "occupied_thresh: " << occupied_thresh << std::endl <<
                     "original_size: " << original_size << std::endl <<
-                    "var_thresh" << var_thresh << std::endl <<
-                    "prior_A" << prior_A << std::endl <<
-                    "prior_B" << prior_B
+                    "var_thresh: " << var_thresh << std::endl <<
+                    "prior_A: " << prior_A << std::endl <<
+                    "prior_B: " << prior_B
     );
 
     map = new bgkoctomap::BGKOctoMap(resolution, block_depth, sf2, ell, noise, l, min_var, max_var, max_known_var,
