@@ -42,12 +42,13 @@ $ sudo apt-get install ros-kinetic-octomap*
 
 ### Building with catkin
 
-The repository is set up to work with catkin, so to get started you can clone the repository and compile with `catkin_make`:
+The repository is set up to work with catkin, so to get started you can clone the repository into your catkin workspace `src` folder and compile with `catkin_make`:
 
 ```bash
 my_catkin_workspace/src$ git clone https://github.com/RobustFieldAutonomyLab/la3dm
 my_catkin_workspace/src$ cd ..
 my_catkin_workspace$ catkin_make
+my_catkin_workspace$ source ~/my_catkin_workspace/devel/setup.bash
 ```
 
 ## Running the Demo
@@ -63,7 +64,7 @@ name of the method or dataset as a parameter. For example, if you want to run st
 you would run:
 
 ```bash
-$ roslaunch la3dm la3dm static.launch method:=octomap dataset:=sim_unstructured
+$ roslaunch la3dm la3dm_static.launch method:=octomap dataset:=sim_unstructured
 ```
 
 ## Contributors
