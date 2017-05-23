@@ -16,9 +16,9 @@ double resolution = 0.1;
 double free_resolution = 0.1;
 double max_range = 8.0;
 bool original_size = false;
-bgkoctomap::BGKOctoMap *map;
+la3dm::BGKOctoMap *map;
 
-bgkoctomap::MarkerArrayPub *m_pub;;
+la3dm::MarkerArrayPub *m_pub;;
 int count = 0;
 
 tf::Vector3 last_position;
@@ -28,29 +28,29 @@ double position_change_thresh = 0.1;
 double orientation_change_thresh = 0.2;
 bool updated = false;
 
-bgkoctomap::MarkerArrayPub *f_pub;
-bgkoctomap::MarkerArrayPub *ray_pub;
+la3dm::MarkerArrayPub *f_pub;
+la3dm::MarkerArrayPub *ray_pub;
 
 ros::Publisher grid_pub;
 nav_msgs::OccupancyGrid grid;
 
-// bgkoctomap::MarkerArrayPub *ig_pub;
-bgkoctomap::MarkerArrayPub *colorbar_pub;
+// la3dm::MarkerArrayPub *ig_pub;
+la3dm::MarkerArrayPub *colorbar_pub;
 
 ros::Publisher arrow_pub;
 visualization_msgs::MarkerArray arrow_msg;
 
 struct pair_hash {
-    inline std::size_t operator()(const std::pair<bgkoctomap::BlockHashKey, bgkoctomap::OcTreeHashKey> &p) const {
-        std::hash<bgkoctomap::BlockHashKey> b_hash;
-        std::hash<bgkoctomap::OcTreeHashKey > n_hash;
+    inline std::size_t operator()(const std::pair<la3dm::BlockHashKey, la3dm::OcTreeHashKey> &p) const {
+        std::hash<la3dm::BlockHashKey> b_hash;
+        std::hash<la3dm::OcTreeHashKey > n_hash;
         return b_hash(p.first) ^ n_hash(p.second);
     }
 };
 
-void publish_project_2d_map(const bgkoctomap::BGKOctoMap &map) {
+void publish_project_2d_map(const la3dm::BGKOctoMap &map) {
     ROS_INFO_STREAM("Projecting 2D map...");
-    bgkoctomap::point3f lim_min, lim_max;
+    la3dm::point3f lim_min, lim_max;
     map.get_bbox(lim_min, lim_max);
     float resolution = map.get_resolution();
     unsigned short lim = static_cast<unsigned short>(pow(2, map.get_block_depth() - 1));
@@ -68,28 +68,28 @@ void publish_project_2d_map(const bgkoctomap::BGKOctoMap &map) {
     grid.header.stamp = ros::Time::now();
     float z0 = 0.05f, z_sensor = 0.35f;
 
-    std::vector<bgkoctomap::point3f> candidates;
+    std::vector<la3dm::point3f> candidates;
     grid.data = std::vector<int8_t>(width * height, -1);
     for (unsigned short bi = 0; bi < block_height; ++bi) {
         float y = lim_min.y() + (bi + 0.5f) * map.get_block_size();
         for (unsigned short bj = 0; bj < block_width; ++bj) {
             float x = lim_min.x() + (bj + 0.5f) * map.get_block_size();
-            bgkoctomap::Block *block = map.search(bgkoctomap::block_to_hash_key(x, y, z0));
+            la3dm::Block *block = map.search(la3dm::block_to_hash_key(x, y, z0));
             if (block == nullptr)
                 continue;
 
             unsigned short ix, iy, iz;
-            block->get_index(bgkoctomap::point3f(x, y, z0), ix, iy, iz);
+            block->get_index(la3dm::point3f(x, y, z0), ix, iy, iz);
             for (unsigned short i = 0; i < lim; ++i) {
                 for (unsigned short j = 0; j < lim; ++j) {
-                    bgkoctomap::OcTreeNode &node = (*block)[block->get_node(j, i, iz)];
+                    la3dm::OcTreeNode &node = (*block)[block->get_node(j, i, iz)];
                     int index = (bi * lim + i) * width + bj * lim + j;
-                    if (node.get_state() == bgkoctomap::State::FREE) {
+                    if (node.get_state() == la3dm::State::FREE) {
                         grid.data[index] = 0;
                         candidates.emplace_back(lim_min.x() + resolution * (bj * lim + j + 0.5),
                                                 lim_min.y() + resolution * (bi * lim + i + 0.5),
                                                 z_sensor + 0.5 * resolution);
-                    } else if (node.get_state() == bgkoctomap::State::OCCUPIED)
+                    } else if (node.get_state() == la3dm::State::OCCUPIED)
                         grid.data[index] = 100;
                     else
                         grid.data[index] = -1;
@@ -110,7 +110,7 @@ void cloud_callback(const sensor_msgs::PointCloud2ConstPtr &cloud) {
     }
 
     ros::Time start = ros::Time::now();
-    bgkoctomap::point3f origin;
+    la3dm::point3f origin;
     tf::Vector3 translation = transform.getOrigin();
     tf::Quaternion orientation = transform.getRotation();
     if (first || orientation.angleShortestPath(last_orientation) > orientation_change_thresh ||
@@ -126,7 +126,7 @@ void cloud_callback(const sensor_msgs::PointCloud2ConstPtr &cloud) {
         sensor_msgs::PointCloud2 cloud_map;
         pcl_ros::transformPointCloud(frame_id, *cloud, cloud_map, *listener);
 
-        bgkoctomap::PCLPointCloud pcl_cloud;
+        la3dm::PCLPointCloud pcl_cloud;
         pcl::fromROSMsg(cloud_map, pcl_cloud);
         map->insert_pointcloud(pcl_cloud, origin, (float) resolution, (float) free_resolution, (float) max_range);
 
@@ -136,16 +136,16 @@ void cloud_callback(const sensor_msgs::PointCloud2ConstPtr &cloud) {
     }
 
     if (count == 0 && updated) {
-        bgkoctomap::point3f lim_min, lim_max;
+        la3dm::point3f lim_min, lim_max;
         float min_z, max_z;
         map->get_bbox(lim_min, lim_max);
         min_z = lim_min.z();
         max_z = lim_max.z();
         m_pub->clear();
         for (auto it = map->begin_leaf(); it != map->end_leaf(); ++it) {
-            if (it.get_node().get_state() == bgkoctomap::State::OCCUPIED) {
+            if (it.get_node().get_state() == la3dm::State::OCCUPIED) {
                 if (original_size) {
-                    bgkoctomap::point3f p = it.get_loc();
+                    la3dm::point3f p = it.get_loc();
                     m_pub->insert_point3d(p.x(), p.y(), p.z(), min_z, max_z, it.get_size());
                 } else {
                     auto pruned = it.get_pruned_locs();
@@ -161,7 +161,7 @@ void cloud_callback(const sensor_msgs::PointCloud2ConstPtr &cloud) {
         ROS_INFO_STREAM("Computing frontiers");
         f_pub->clear();
         for (auto it = map->begin_leaf(); it != map->end_leaf(); ++it) {
-            bgkoctomap::point3f p = it.get_loc();
+            la3dm::point3f p = it.get_loc();
             if (p.z() > 2.0 || p.z() < 0.3)
                 continue;
 
@@ -185,9 +185,9 @@ void cloud_callback(const sensor_msgs::PointCloud2ConstPtr &cloud) {
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "bgkoctomap_server");
-    ros::NodeHandle nh;
+    ros::NodeHandle nh("~");
 
-    std::string cloud_topic("/scan_pc2");
+    std::string cloud_topic("/pointcloud");
     std::string map_topic("/occupied_cells_vis_array");
     int block_depth = 4;
     double sf2 = 1.0;
@@ -249,17 +249,16 @@ int main(int argc, char **argv) {
                     "prior_B: " << prior_B
     );
 
-    map = new bgkoctomap::BGKOctoMap(resolution, block_depth, sf2, ell, noise, l, min_var, max_var, max_known_var,
-                                   free_thresh, occupied_thresh, var_thresh, prior_A, prior_B);
+    map = new la3dm::BGKOctoMap(resolution, block_depth, sf2, ell, free_thresh, occupied_thresh, var_thresh, prior_A, prior_B);
 
     ros::Subscriber sub = nh.subscribe<sensor_msgs::PointCloud2>(cloud_topic, 0, cloud_callback);
-    m_pub = new bgkoctomap::MarkerArrayPub(nh, map_topic, 0.1f);
+    m_pub = new la3dm::MarkerArrayPub(nh, map_topic, 0.1f);
     listener = new tf::TransformListener();
 
-    f_pub = new bgkoctomap::MarkerArrayPub(nh, "frontier_map", resolution);
-    ray_pub = new bgkoctomap::MarkerArrayPub(nh, "ray", resolution);
-    // ig_pub = new bgkoctomap::MarkerArrayPub(nh, "ig", resolution);
-    colorbar_pub = new bgkoctomap::MarkerArrayPub(nh, "colorbar", resolution);
+    f_pub = new la3dm::MarkerArrayPub(nh, "frontier_map", resolution);
+    ray_pub = new la3dm::MarkerArrayPub(nh, "ray", resolution);
+    // ig_pub = new la3dm::MarkerArrayPub(nh, "ig", resolution);
+    colorbar_pub = new la3dm::MarkerArrayPub(nh, "colorbar", resolution);
 
     grid_pub = nh.advertise<nav_msgs::OccupancyGrid>("/map", 0, false);
 
