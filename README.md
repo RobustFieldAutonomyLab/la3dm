@@ -24,7 +24,7 @@ month={May},
 Bayesian Generalized Kernel Inference for Occupancy Map Prediction ([PDF](http://personal.stevens.edu/~benglot/Doherty_Wang_Englot_ICRA_2017.pdf))
 ```
 @INPROCEEDINGS{KDoherty-ICRA-17,
-author={K. Doherty, J. Wang, and B. Englot},
+author={K. Doherty and J. Wang, and B. Englot},
 booktitle={2017 IEEE International Conference on Robotics and Automation (ICRA)},
 title={Bayesian Generalized Kernel Inference for Occupancy Map Prediction},
 year={2017},
