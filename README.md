@@ -36,9 +36,17 @@ month={May},
 
 ### Dependencies
 
+We tested LA3DM with ROS Kinetic, but it also works with ROS Indigo, just ensure you have the correct dependencies by running:
+
 ```bash
 $ sudo apt-get install ros-kinetic-octomap*
 ```
+if you're using ROS Kinetic, or:
+
+```bash
+$ sudo apt-get install ros-indigo-octomap*
+```
+if you're using Indigo.
 
 ### Building with catkin
 
