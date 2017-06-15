@@ -24,7 +24,7 @@ month={May},
 Bayesian Generalized Kernel Inference for Occupancy Map Prediction ([PDF](http://personal.stevens.edu/~benglot/Doherty_Wang_Englot_ICRA_2017.pdf))
 ```
 @INPROCEEDINGS{KDoherty-ICRA-17,
-author={K. Doherty, J. Wang, and B. Englot},
+author={K. Doherty and J. Wang, and B. Englot},
 booktitle={2017 IEEE International Conference on Robotics and Automation (ICRA)},
 title={Bayesian Generalized Kernel Inference for Occupancy Map Prediction},
 year={2017},
@@ -36,18 +36,27 @@ month={May},
 
 ### Dependencies
 
+We tested LA3DM with ROS Kinetic, but it also works with ROS Indigo, just ensure you have the correct dependencies by running:
+
 ```bash
 $ sudo apt-get install ros-kinetic-octomap*
 ```
+if you're using ROS Kinetic, or:
+
+```bash
+$ sudo apt-get install ros-indigo-octomap*
+```
+if you're using Indigo.
 
 ### Building with catkin
 
-The repository is set up to work with catkin, so to get started you can clone the repository and compile with `catkin_make`:
+The repository is set up to work with catkin, so to get started you can clone the repository into your catkin workspace `src` folder and compile with `catkin_make`:
 
 ```bash
 my_catkin_workspace/src$ git clone https://github.com/RobustFieldAutonomyLab/la3dm
 my_catkin_workspace/src$ cd ..
 my_catkin_workspace$ catkin_make
+my_catkin_workspace$ source ~/my_catkin_workspace/devel/setup.bash
 ```
 
 ## Running the Demo
@@ -63,7 +72,7 @@ name of the method or dataset as a parameter. For example, if you want to run st
 you would run:
 
 ```bash
-$ roslaunch la3dm la3dm static.launch method:=octomap dataset:=sim_unstructured
+$ roslaunch la3dm la3dm_static.launch method:=octomap dataset:=sim_unstructured
 ```
 
 ## Contributors
