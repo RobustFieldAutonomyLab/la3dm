@@ -400,7 +400,7 @@ namespace la3dm {
             }
         }
 
-        PCLPointCloud sampled_frees;
+        PCLPointCloud sampled_frees;    
         downsample(frees, sampled_frees, ds_resolution);
 
         for (auto it = sampled_frees.begin(); it != sampled_frees.end(); ++it) {
