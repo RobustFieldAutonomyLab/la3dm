@@ -6,7 +6,8 @@
 #include <nav_msgs/OccupancyGrid.h>
 #include <visualization_msgs/MarkerArray.h>
 #include <unordered_set>
-#include "bgkoctomap.h"
+#include <gpregressor.h>
+#include "gpoctomap.h"
 #include "markerarray_pub.h"
 
 tf::TransformListener *listener;
@@ -15,7 +16,7 @@ double resolution = 0.1;
 double free_resolution = 0.1;
 double max_range = 8.0;
 bool original_size = false;
-la3dm::BGKOctoMap *map;
+la3dm::GPOctoMap *map;
 
 la3dm::MarkerArrayPub *m_pub;;
 int count = 0;
@@ -47,60 +48,59 @@ struct pair_hash {
     }
 };
 
-// void publish_project_2d_map(const la3dm::BGKOctoMap &map) {
-//     ROS_INFO_STREAM("Projecting 2D map...");
-//     la3dm::point3f lim_min, lim_max;
-//     map.get_bbox(lim_min, lim_max);
-//     float resolution = map.get_resolution();
-//     unsigned short lim = static_cast<unsigned short>(pow(2, map.get_block_depth() - 1));
-//     unsigned short block_width = static_cast<unsigned short>((lim_max.x() - lim_min.x() + 0.01) / map.get_block_size());
-//     unsigned short block_height = static_cast<unsigned short>((lim_max.y() - lim_min.y() + 0.01) /
-//                                                               map.get_block_size());
-//     unsigned int width = lim * block_width;
-//     unsigned int height = lim * block_height;
-//     grid.info.width = width;
-//     grid.info.height = height;
-//     grid.info.origin.position.x = lim_min.x();
-//     grid.info.origin.position.y = lim_min.y();
-//     grid.info.resolution = resolution;
-//     grid.header.frame_id = frame_id;
-//     grid.header.stamp = ros::Time::now();
-//     float z0 = 0.05f, z_sensor = 0.35f;
+void publish_project_2d_map(const la3dm::GPOctoMap &map) {
+    ROS_INFO_STREAM("Projecting 2D map...");
+    la3dm::point3f lim_min, lim_max;
+    map.get_bbox(lim_min, lim_max);
+    float resolution = map.get_resolution();
+    unsigned short lim = static_cast<unsigned short>(pow(2, map.get_block_depth() - 1));
+    unsigned short block_width = static_cast<unsigned short>((lim_max.x() - lim_min.x() + 0.01) / map.get_block_size());
+    unsigned short block_height = static_cast<unsigned short>((lim_max.y() - lim_min.y() + 0.01) /
+                                                              map.get_block_size());
+    unsigned int width = lim * block_width;
+    unsigned int height = lim * block_height;
+    grid.info.width = width;
+    grid.info.height = height;
+    grid.info.origin.position.x = lim_min.x();
+    grid.info.origin.position.y = lim_min.y();
+    grid.info.resolution = resolution;
+    grid.header.frame_id = frame_id;
+    grid.header.stamp = ros::Time::now();
+    float z0 = 0.05f, z_sensor = 0.35f;
 
-//     std::vector<la3dm::point3f> candidates;
-//     grid.data = std::vector<int8_t>(width * height, -1);
-//     for (unsigned short bi = 0; bi < block_height; ++bi) {
-//         float y = lim_min.y() + (bi + 0.5f) * map.get_block_size();
-//         for (unsigned short bj = 0; bj < block_width; ++bj) {
-//             float x = lim_min.x() + (bj + 0.5f) * map.get_block_size();
-//             la3dm::Block *block = map.search(la3dm::block_to_hash_key(x, y, z0));
-//             if (block == nullptr)
-//                 continue;
+    std::vector<la3dm::point3f> candidates;
+    grid.data = std::vector<int8_t>(width * height, -1);
+    for (unsigned short bi = 0; bi < block_height; ++bi) {
+        float y = lim_min.y() + (bi + 0.5f) * map.get_block_size();
+        for (unsigned short bj = 0; bj < block_width; ++bj) {
+            float x = lim_min.x() + (bj + 0.5f) * map.get_block_size();
+            la3dm::Block *block = map.search(la3dm::block_to_hash_key(x, y, z0));
+            if (block == nullptr)
+                continue;
 
-//             unsigned short ix, iy, iz;
-//             block->get_index(la3dm::point3f(x, y, z0), ix, iy, iz);
-//             for (unsigned short i = 0; i < lim; ++i) {
-//                 for (unsigned short j = 0; j < lim; ++j) {
-//                     la3dm::OcTreeNode &node = (*block)[block->get_node(j, i, iz)];
-//                     int index = (bi * lim + i) * width + bj * lim + j;
-//                     if (node.get_state() == la3dm::State::FREE) {
-//                         grid.data[index] = 0;
-//                         candidates.emplace_back(lim_min.x() + resolution * (bj * lim + j + 0.5),
-//                                                 lim_min.y() + resolution * (bi * lim + i + 0.5),
-//                                                 z_sensor + 0.5 * resolution);
-//                     } else if (node.get_state() == la3dm::State::OCCUPIED)
-//                         grid.data[index] = 100;
-//                     else
-//                         grid.data[index] = -1;
-//                 }
-//             }
-//         }
-//     }
-// }
+            unsigned short ix, iy, iz;
+            block->get_index(la3dm::point3f(x, y, z0), ix, iy, iz);
+            for (unsigned short i = 0; i < lim; ++i) {
+                for (unsigned short j = 0; j < lim; ++j) {
+                    la3dm::OcTreeNode &node = (*block)[block->get_node(j, i, iz)];
+                    int index = (bi * lim + i) * width + bj * lim + j;
+                    if (node.get_state() == la3dm::State::FREE) {
+                        grid.data[index] = 0;
+                        candidates.emplace_back(lim_min.x() + resolution * (bj * lim + j + 0.5),
+                                                lim_min.y() + resolution * (bi * lim + i + 0.5),
+                                                z_sensor + 0.5 * resolution);
+                    } else if (node.get_state() == la3dm::State::OCCUPIED)
+                        grid.data[index] = 100;
+                    else
+                        grid.data[index] = -1;
+                }
+            }
+        }
+    }
+}
 
 
 void cloud_callback(const sensor_msgs::PointCloud2ConstPtr &cloud) {
-    ROS_INFO_STREAM("Got Pointcloud");
     tf::StampedTransform transform;
     try {
         listener->lookupTransform(frame_id, cloud->header.frame_id, cloud->header.stamp, transform);
@@ -115,7 +115,7 @@ void cloud_callback(const sensor_msgs::PointCloud2ConstPtr &cloud) {
     tf::Quaternion orientation = transform.getRotation();
     if (first || orientation.angleShortestPath(last_orientation) > orientation_change_thresh ||
         translation.distance(last_position) > position_change_thresh) {
-        // first = false;
+        first = false;
         last_position = translation;
         last_orientation = orientation;
         origin.x() = (float) translation.x();
@@ -135,13 +135,12 @@ void cloud_callback(const sensor_msgs::PointCloud2ConstPtr &cloud) {
         updated = true;
     }
 
-    if (count == 0) {
+    if (count == 0 && updated) {
         la3dm::point3f lim_min, lim_max;
         float min_z, max_z;
         map->get_bbox(lim_min, lim_max);
         min_z = lim_min.z();
         max_z = lim_max.z();
-        ROS_INFO_STREAM("min_z " << min_z << "max_z " << max_z);
         m_pub->clear();
         for (auto it = map->begin_leaf(); it != map->end_leaf(); ++it) {
             if (it.get_node().get_state() == la3dm::State::OCCUPIED) {
@@ -159,35 +158,33 @@ void cloud_callback(const sensor_msgs::PointCloud2ConstPtr &cloud) {
         updated = false;
 
         ///////// Compute Frontiers /////////////////////
-        // ROS_INFO_STREAM("Computing frontiers");
-        // f_pub->clear();
-        // for (auto it = map->begin_leaf(); it != map->end_leaf(); ++it) {
-        //     la3dm::point3f p = it.get_loc();
-        //     if (p.z() > 2.0 || p.z() < 0.3)
-        //         continue;
+        ROS_INFO_STREAM("Computing frontiers");
+        f_pub->clear();
+        for (auto it = map->begin_leaf(); it != map->end_leaf(); ++it) {
+            la3dm::point3f p = it.get_loc();
+            if (p.z() > 2.0 || p.z() < 0.3)
+                continue;
 
-        //     if (it.get_node().get_var() > 0.02 &&
-        //         it.get_node().get_prob() < 0.1) {
-        //         f_pub->insert_point3d(p.x(), p.y(), p.z());
-        //     }
-        // }
+            if (it.get_node().get_var() > 0.02 &&
+                it.get_node().get_prob() < 0.1) {
+                f_pub->insert_point3d(p.x(), p.y(), p.z());
+            }
+        }
 
-        // publish_project_2d_map(*map);
+        publish_project_2d_map(*map);
 
-        ROS_INFO_STREAM("Publishing 3D map");
         m_pub->publish();
-        // f_pub->publish();
-        // grid_pub.publish(grid);
+        f_pub->publish();
+        grid_pub.publish(grid);
         // ig_pub->publish();
         colorbar_pub->publish();
         arrow_pub.publish(arrow_msg);
-        ROS_INFO_STREAM("Done publishing");
     }
     count = (++count) % 10;
 }
 
 int main(int argc, char **argv) {
-    ros::init(argc, argv, "bgkoctomap_server");
+    ros::init(argc, argv, "gpoctomap_server");
     ros::NodeHandle nh("~");
 
     std::string cloud_topic("/pointcloud");
@@ -200,16 +197,16 @@ int main(int argc, char **argv) {
     double min_var = 0.001;
     double max_var = 1000;
     double max_known_var = 0.02;
+    double free_resolution = 0.5;
     double ds_resolution = 0.1;
     double free_thresh = 0.3;
     double occupied_thresh = 0.7;
-    float var_thresh = 1.0f;
-    float prior_A = 1.0f;
-    float prior_B = 1.0f;
+    double min_z = 0;
+    double max_z = 0;
+    bool original_size = false;
 
     nh.param<std::string>("map_topic", map_topic, map_topic);
     nh.param<std::string>("cloud_topic", cloud_topic, cloud_topic);
-    nh.param<std::string>("frame_id", frame_id, frame_id);
     nh.param<double>("max_range", max_range, max_range);
     nh.param<double>("resolution", resolution, resolution);
     nh.param<int>("block_depth", block_depth, block_depth);
@@ -224,36 +221,32 @@ int main(int argc, char **argv) {
     nh.param<double>("ds_resolution", ds_resolution, ds_resolution);
     nh.param<double>("free_thresh", free_thresh, free_thresh);
     nh.param<double>("occupied_thresh", occupied_thresh, occupied_thresh);
+    nh.param<double>("min_z", min_z, min_z);
+    nh.param<double>("max_z", max_z, max_z);
     nh.param<bool>("original_size", original_size, original_size);
-    nh.param<float>("var_thresh", var_thresh, var_thresh);
-    nh.param<float>("prior_A", prior_A, prior_A);
-    nh.param<float>("prior_B", prior_B, prior_B);
 
     ROS_INFO_STREAM("Parameters:" << std::endl <<
-                    "map_topic: " << map_topic << std::endl <<
-                    "cloud_topic: " << cloud_topic << std::endl <<
-                    "frame_id: " << frame_id << std::endl <<
-                    "max_range: " << max_range << std::endl <<
-                    "resolution: " << resolution << std::endl <<
-                    "block_depth: " << block_depth << std::endl <<
-                    "sf2: " << sf2 << std::endl <<
-                    "ell: " << ell << std::endl <<
-                    "l: " << l << std::endl <<
-                    "min_var: " << min_var << std::endl <<
-                    "max_var: " << max_var << std::endl <<
-                    "max_known_var: " << max_known_var << std::endl <<
-                    "free_resolution: " << free_resolution << std::endl <<
-                    "ds_resolution: " << ds_resolution << std::endl <<
-                    "free_thresh: " << free_thresh << std::endl <<
-                    "occupied_thresh: " << occupied_thresh << std::endl <<
-                    "original_size: " << original_size << std::endl <<
-                    "var_thresh: " << var_thresh << std::endl <<
-                    "prior_A: " << prior_A << std::endl <<
-                    "prior_B: " << prior_B
-    );
+            "map_topic: " << map_topic << std::endl <<
+            "cloud_topic: " << cloud_topic << std::endl <<
+            "max_range: " << max_range << std::endl <<
+            "resolution: " << resolution << std::endl <<
+            "block_depth: " << block_depth << std::endl <<
+            "sf2: " << sf2 << std::endl <<
+            "ell: " << ell << std::endl <<
+            "l: " << l << std::endl <<
+            "min_var: " << min_var << std::endl <<
+            "max_var: " << max_var << std::endl <<
+            "max_known_var: " << max_known_var << std::endl <<
+            "free_resolution: " << free_resolution << std::endl <<
+            "ds_resolution: " << ds_resolution << std::endl <<
+            "free_thresh: " << free_thresh << std::endl <<
+            "occupied_thresh: " << occupied_thresh << std::endl <<
+            "min_z: " << min_z << std::endl <<
+            "max_z: " << max_z << std::endl <<
+            "original_size: " << original_size
+            );
 
-    map = new la3dm::BGKOctoMap(resolution, block_depth, sf2, ell,
-                         free_thresh, occupied_thresh, var_thresh, prior_A, prior_B);
+    map = new la3dm::GPOctoMap(resolution, block_depth, sf2, ell, noise, l, min_var, max_var, max_known_var, free_thresh, occupied_thresh);
 
     ros::Subscriber sub = nh.subscribe<sensor_msgs::PointCloud2>(cloud_topic, 0, cloud_callback);
     m_pub = new la3dm::MarkerArrayPub(nh, map_topic, 0.1f);
