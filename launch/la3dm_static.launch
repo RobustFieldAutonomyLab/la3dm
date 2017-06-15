@@ -20,7 +20,7 @@
     <arg name="data_config" value="$(find la3dm)/config/datasets/"/>
 
     <!--Start the LA3DM node -->
-    <node pkg="la3dm" type="$(arg method)_static_node" name="la3dm" output="screen">
+    <node pkg="la3dm" type="$(arg method)_static_node" name="la3dm_static" output="screen">
 
         <param name="dir" value="$(arg dir)"/>
         <param name="prefix" value="$(arg prefix)"/>

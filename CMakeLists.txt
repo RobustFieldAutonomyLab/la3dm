@@ -158,9 +158,11 @@ add_executable(gpoctomap_static_node
 add_executable(octomap_static_node
     src/octomap/octomap_static_node.cpp)
 
-# add_executable(bgkoctomap_server ${SOURCE_FILES}
-#         src/bgkoctomap_server.cpp
-# )
+add_executable(bgkoctomap_server
+        ${BGK_SOURCE_FILES}
+        ${COMMON_SOURCE_FILES}
+        src/bgkoctomap/bgkoctomap_server.cpp
+)
 
 # add_executable(gpoctomap_server ${SOURCE_FILES}
 #         src/gpoctomap_server.cpp
@@ -184,9 +186,9 @@ target_link_libraries(octomap_static_node
         ${OCTOMAP_LIBRARIES}
 )
 
-# target_link_libraries(bgkoctomap_server
-#         ${catkin_LIBRARIES}
-# )
+target_link_libraries(bgkoctomap_server
+        ${catkin_LIBRARIES}
+)
 
 # target_link_libraries(gpoctomap_server
 #         ${catkin_LIBRARIES}
