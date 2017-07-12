@@ -24,6 +24,7 @@ add_definitions(-DOPENMP)
 find_package(catkin REQUIRED COMPONENTS
         geometry_msgs
         visualization_msgs
+        nav_msgs
         pcl_ros
         roscpp
         octomap_ros
