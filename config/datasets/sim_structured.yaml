@@ -2,7 +2,7 @@
 
 # Information about range-finder data
 scan_num: 12 # How many scans to use
-max_range: 8 # Sensor max range (m)
+max_range: 4 # Sensor max range (m)
 
 # Bounds on map height
 min_z: 0
