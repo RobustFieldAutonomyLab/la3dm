@@ -222,6 +222,11 @@ namespace la3dm {
 #ifdef DEBUG
         Debug_Msg("Training data size: " << xy.size());
 #endif
+        // If pointcloud after max_range filtering is empty
+        //  no need to do anything
+        if (xy.size() == 0) {
+            return;
+        }
 
         point3f lim_min, lim_max;
         bbox(xy, lim_min, lim_max);
@@ -449,7 +454,12 @@ namespace la3dm {
             frees.emplace_back(x0 + nx * (l - free_resolution), y0 + ny * (l - free_resolution), z0 + nz * (l - free_resolution));
     }
 
+    /*
+     * Compute bounding box of pointcloud
+     * Precondition: cloud non-empty
+     */
     void BGKOctoMap::bbox(const GPPointCloud &cloud, point3f &lim_min, point3f &lim_max) const {
+        assert(cloud.size() > 0);
         vector<float> x, y, z;
         for (auto it = cloud.cbegin(); it != cloud.cend(); ++it) {
             x.push_back(it->first.x());
