@@ -54,6 +54,20 @@ $ roslaunch la3dm la3dm_static.launch method:=octomap dataset:=sim_unstructured
 
 If you found this code useful, please cite the following:
 
+Learning-Aided 3-D Occupancy Mapping with Bayesian Generalized Kernel Inference ([PDF](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8713569))
+```
+@article{Doherty2019,
+  doi = {10.1109/tro.2019.2912487},
+  url = {https://doi.org/10.1109/tro.2019.2912487},
+  year = {2019},
+  publisher = {Institute of Electrical and Electronics Engineers ({IEEE})},
+  pages = {1--14},
+  author = {Kevin Doherty and Tixiao Shan and Jinkun Wang and Brendan Englot},
+  title = {Learning-Aided 3-D Occupancy Mapping With Bayesian Generalized Kernel Inference},
+  journal = {{IEEE} Transactions on Robotics}
+}
+```
+
 Fast, accurate gaussian process occupancy maps via test-data octrees and nested Bayesian fusion ([PDF](http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7487232))
 ```
 @INPROCEEDINGS{JWang-ICRA-16,
