@@ -80,7 +80,7 @@ month={May},
 }
 ```
 
-Bayesian Generalized Kernel Inference for Occupancy Map Prediction ([PDF](http://personal.stevens.edu/~benglot/Doherty_Wang_Englot_ICRA_2017.pdf))
+Bayesian Generalized Kernel Inference for Occupancy Map Prediction ([PDF](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7989356))
 ```
 @INPROCEEDINGS{KDoherty-ICRA-17,
 author={K. Doherty and J. Wang, and B. Englot},
