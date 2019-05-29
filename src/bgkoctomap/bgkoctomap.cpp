@@ -80,6 +80,9 @@ namespace la3dm {
     }
 
     void BGKOctoMap::insert_training_data(const GPPointCloud &xy) {
+        if (xy.empty())
+            return;
+
         point3f lim_min, lim_max;
         bbox(xy, lim_min, lim_max);
 
