@@ -6,16 +6,11 @@ resolution: 0.1
 block_depth: 3 # Test-data octree depth (see Wang & Englot ICRA 2016)
 
 # Kernel parameters
-sf2: 1.0 # 0.1 # Actually sigma_0 in sparse kernel
-# ell: 0.2 # sim data #0.2 # Length scale of the sparse kernel
-# ell: 0.15 # fr_corridor
-ell: 0.2 # stevens_campus
+sf2: 1.0 # Actually sigma_0 in sparse kernel
+ell: 0.2 # # Length scale of the sparse kernel
 
 # Sampling resolutions
-# free_resolution: 1.0 # sim_structured # 10.0 # 0.9 # Free space sampling resolution
-# free_resolution: 2.0 # fr_corridor, stevens_campus
-free_resolution: 2.0 # ???
-# free_resolution: 1.0
+free_resolution: 1.0 # Free space sampling res
 ds_resolution: 0.1  # Downsampling factor
 
 # Free/Occupied Thresholds
