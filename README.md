@@ -1,7 +1,7 @@
 # Learning-Aided 3D Mapping
 [![Build Status](https://travis-ci.org/RobustFieldAutonomyLab/la3dm.svg?branch=master)](https://travis-ci.org/RobustFieldAutonomyLab/la3dm)
 
-A suite of algorithms for learning-aided mapping. Includes implementations of Gaussian process regression and Bayesian generalized kernel inference for occupancy prediction using test-data octrees. This framework also contains the components necessary to run OctoMap as a baseline.
+A suite of algorithms for learning-aided mapping. Includes implementations of Gaussian process regression and Bayesian generalized kernel inference for occupancy prediction using test-data octrees. 
 
 ## Overview
 
@@ -42,12 +42,12 @@ To run the demo on the `sim_structured` environment, simply run:
 $ roslaunch la3dm la3dm_static.launch
 ```
 
-which by default will run using the BGKOctoMap method. If you want to try a different method or dataset, simply pass the
-name of the method or dataset as a parameter. For example, if you want to run standard OctoMap on the `sim_unstructured` map,
+which by default will run using the BGKOctoMap-LV method. If you want to try a different method or dataset, simply pass the
+name of the method or dataset as a parameter. For example, if you want to run GPOctoMap on the `sim_unstructured` map,
 you would run:
 
 ```bash
-$ roslaunch la3dm la3dm_static.launch method:=octomap dataset:=sim_unstructured
+$ roslaunch la3dm la3dm_static.launch method:=gpoctomap dataset:=sim_unstructured
 ```
 
 ## Relevant Publications
@@ -93,4 +93,4 @@ month={May},
 
 ## Contributors
 
-Jinkun Wang and Kevin Doherty, [Robust Field Autonomy Lab (RFAL)](http://personal.stevens.edu/~benglot/index.html), Stevens Institute of Technology.
+Jinkun Wang, Kevin Doherty and Erik Pearson, [Robust Field Autonomy Lab (RFAL)](http://personal.stevens.edu/~benglot/index.html), Stevens Institute of Technology.

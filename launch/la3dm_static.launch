@@ -2,7 +2,7 @@
     <!-- la3dm_static -->
     <!-- Sets up an la3dm node with parameters specified by args -->
     <!-- See la3dm/config/methods/bgkoctomap.yaml for config parameters -->
-    <arg name="method" default="bgkoctomap"/>
+    <arg name="method" default="bgklvoctomap"/>
 
     <!-- 
         Choose world:
