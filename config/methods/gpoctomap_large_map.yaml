@@ -1,0 +1,33 @@
+# GP/BGKL+ Large Map config
+
+# Map topic, grid cell mininum resolution
+topic: /occupied_cells_vis_array
+resolution: 0.2
+block_depth: 4 # Test-data octree depth (see Wang & Englot ICRA 2016)
+max_range: 30 # Sensor max range (m)
+original_size: true 
+
+# Bounds on map height
+min_z: -3.0
+max_z: 3.0
+
+# Kernel parameters
+sf2: 1.0
+ell: 1.0
+
+# Sampling resolutions
+free_resolution: 0.1
+ds_resolution: 0.5  # Downsampling factor
+
+# Free/Occupied Thresholds
+free_thresh: 0.3
+occupied_thresh: 0.7
+
+# GP parameters
+noise: 0.01
+l: 100
+max_var: 1000
+min_var: 0.001
+max_known_var: 0.02
+
+
