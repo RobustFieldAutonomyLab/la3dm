@@ -73,15 +73,8 @@ void cloudHandler(const sensor_msgs::PointCloud2ConstPtr &cloud) {
         la3dm::PCLPointCloud::Ptr pcl_cloud (new la3dm::PCLPointCloud());
         pcl::fromROSMsg(cloud_map, *pcl_cloud);
 
-        //downsample for faster mapping
-        la3dm::PCLPointCloud filtered_cloud;
-        pcl::VoxelGrid<pcl::PointXYZ> filterer;
-        filterer.setInputCloud(pcl_cloud);
-        filterer.setLeafSize(ds_resolution, ds_resolution, ds_resolution);
-        filterer.filter(filtered_cloud);
-
-        if(filtered_cloud.size() > 5){
-            map->insert_pointcloud(filtered_cloud, origin, (float) resolution, (float) free_resolution, (float) max_range);
+        if(pcl_cloud->size() > 5){
+            map->insert_pointcloud(*pcl_cloud, origin, (float) ds_resolution, (float) free_resolution, (float) max_range);
         }
 
         ros::Time end = ros::Time::now();

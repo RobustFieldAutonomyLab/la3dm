@@ -24,7 +24,7 @@ namespace la3dm {
         BGKLVInference(T sf2, T ell) : sf2(sf2), ell(ell), trained(false) { }
 
         /*
-         * @brief Fit BGK Model
+         * @brief Fit BGKLV Model
          * @param x input vector (3N, row major)
          * @param y target vector (N)
          */
@@ -36,7 +36,7 @@ namespace la3dm {
         }
 
         /*
-         * @brief Fit BGK Model
+         * @brief Fit BGKLV Model
          * @param x input matrix (NX3)
          * @param y target matrix (NX1)
          */
@@ -48,21 +48,17 @@ namespace la3dm {
         }
 
         /*
-         * @brief Predict with BGK Model
+         * @brief Predict with BGKLV Model
          * @param xs input vector (3M, row major)
          * @param ybar positive class kernel density estimate (\bar{y})
          * @param kbar kernel density estimate (\bar{k})
          */
         void predict(const std::vector<T> &xs, std::vector<T> &ybar, std::vector<T> &kbar) const {
-            // std::cout << "predicting" << std::endl;
             assert(xs.size() % dim == 0);
-            // std::cout << "passed assertion" << std::endl;
             MatrixPType _xs = Eigen::Map<const MatrixPType>(xs.data(), xs.size() / dim, dim);
-            // std::cout << "matrix conversion successful" << std::endl;
 
             MatrixYType _ybar, _kbar;
             predict(_xs, _ybar, _kbar);
-            // std::cout << "finished prediction" << std::endl;
             ybar.resize(_ybar.rows());
             kbar.resize(_kbar.rows());
             for (int r = 0; r < _kbar.rows(); ++r) {
@@ -101,11 +97,8 @@ namespace la3dm {
             }
         }
 
-
-        // TODO: validate me
         void point_to_line_dist(const MatrixPType &x, const MatrixXType &z, MatrixKType &d) const {
             assert((x.cols() == 3) && (z.cols() == 6));
-            // std::cout << "made it" << std::endl;
             d = MatrixKType::Zero(x.rows(), z.rows());
             float line_len;
             point3f p, p0, p1, v, w, line_vec, pnt_vec, nearest;
@@ -160,25 +153,6 @@ namespace la3dm {
             //sparse kernel function
             Kxz = (((2.0f + (Kxz * 2.0f * 3.1415926f).array().cos()) * (1.0f - Kxz.array()) / 3.0f) + (Kxz * 2.0f * 3.1415926f).array().sin() / (2.0f * 3.1415926f)).matrix() * sf2;
             
-            //1 over x type function
-            //float stretch = 1.0f;
-            //Kxz = (stretch*2.0f/(Kxz.array().sqrt()+1.0f)-1.0f*stretch).matrix();
-
-            //Gaussian with sigma = 0.3936, offset = 0.0413
-            //float sigma = 0.3936f;
-            //float offset = 0.0413f;
-            //Kxz = (exp(-Kxz.array()*Kxz.array()/(2*pow(sigma, 2)))/pow((pow(2*M_PI, 0.5)*sigma), 3) - offset).matrix();
-            
-            // Clean up for values with distance outside length scale
-            // Possible because Kxz <= 0 when dist >= ell
-
-            // for (int i = 0; i < Kxz.rows(); ++i)
-            // {
-            //     for (int j = 0; j < Kxz.cols(); ++j)
-            //         if (Kxz(i,j) < 0.0)
-            //             Kxz(i,j) = 0.0f;
-            // }
-            
         }
 
         T sf2;    // signal variance
@@ -187,10 +161,10 @@ namespace la3dm {
         MatrixXType xt;   // temporary storage of training data
         MatrixYType yt;   // temporary storage of training labels
 
-        bool trained;    // true if bgkinference stored training data
+        bool trained;    // true if bgklvinference stored training data
     };
 
     typedef BGKLVInference<3, float> BGKLV3f;
 
 }
-#endif // LA3DM_BGKL_H
+#endif // LA3DM_BGKLV_H

@@ -22,7 +22,7 @@ namespace la3dm {
      * Bayesian Generalized Kernel Inference for Occupancy Map Prediction
      * The space is partitioned by Blocks in which OcTrees with fixed
      * depth are rooted. Occupancy values in one Block is predicted by 
-     * its ExtendedBlock via Bayesian generalized kernel inference.
+     * each cell via Bayesian generalized kernel inference.
      */
     class BGKLVOctoMap {
     public:
@@ -41,14 +41,13 @@ namespace la3dm {
          * @param resolution (default 0.1m)
          * @param block_depth maximum depth of OcTree (default 4)
          * @param sf2 signal variance in GPs (default 1.0)
-         * @param ell length-scale in GPs (default 1.0)
-         * @param noise noise variance in GPs (default 0.01)
-         * @param l length-scale in logistic regression function (default 100)
-         * @param min_var minimum variance in Occupancy (default 0.001)
-         * @param max_var maximum variance in Occupancy (default 1000)
-         * @param max_known_var maximum variance for Occuapncy to be classified as KNOWN State (default 0.02)
          * @param free_thresh free threshold for Occupancy probability (default 0.3)
          * @param occupied_thresh occupied threshold for Occupancy probability (default 0.7)
+         * @param var_thresh variance threshold to define UNCERTAIN State (default 0.2)
+         * @param prior_A prior weight of Occupied expectation (default 0.001)
+         * @param prior_B prior weight of Free expectation (default 0.001)
+         * @param original_size boolean whether or not to prune (default true)
+         * @param MIN_W threshold for UNKNOWN (default 0.001)
          */
         BGKLVOctoMap(float resolution,
                 unsigned short block_depth,
@@ -384,4 +383,4 @@ namespace la3dm {
 
 }
 
-#endif // LA3DM_BGKLOCTOMAP_H
+#endif // LA3DM_BGKLVOCTOMAP_H
