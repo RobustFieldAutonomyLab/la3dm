@@ -2,8 +2,11 @@
 #include <pcl/filters/voxel_grid.h>
 #include "gpoctomap.h"
 #include "gpregressor.h"
+#include <iostream>
 
 using std::vector;
+
+//#define DEBUG true;
 
 #ifdef DEBUG
 
@@ -174,15 +177,16 @@ namespace la3dm {
 
         ////////// Pruning //////////////////////////////
         /////////////////////////////////////////////////
-#ifdef OPENMP
-#pragma omp parallel for
-#endif
+// #ifdef OPENMP
+// #pragma omp parallel for
+// #endif
         for (int i = 0; i < test_blocks.size(); ++i) {
             BlockHashKey key = test_blocks[i];
             auto block = block_arr.find(key);
             if (block == block_arr.end())
                 continue;
             block->second->prune();
+            
         }
 #ifdef DEBUG
         Debug_Msg("Pruning done");
@@ -321,19 +325,19 @@ namespace la3dm {
 
         ////////// Pruning //////////////////////////////
         /////////////////////////////////////////////////
-// #ifdef OPENMP
-// #pragma omp parallel for
-// #endif
-//         for (int i = 0; i < test_blocks.size(); ++i) {
-//             BlockHashKey key = test_blocks[i];
-//             auto block = block_arr.find(key);
-//             if (block == block_arr.end())
-//                 continue;
-//             block->second->prune();
-//         }
-// #ifdef DEBUG
-//         Debug_Msg("Pruning done");
-// #endif
+#ifdef OPENMP
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < test_blocks.size(); ++i) {
+            BlockHashKey key = test_blocks[i];
+            auto block = block_arr.find(key);
+            if (block == block_arr.end())
+                continue;
+            block->second->prune();
+        }
+#ifdef DEBUG
+        Debug_Msg("Pruning done");
+#endif
         /////////////////////////////////////////////////
 
 

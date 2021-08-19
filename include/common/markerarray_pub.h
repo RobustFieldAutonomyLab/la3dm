@@ -109,7 +109,7 @@ namespace la3dm {
 
             int depth = 0;
             if (size > 0)
-                depth = (int) log2(size / 0.1);
+                depth = (int) log2(size /resolution);
 
             msg->markers[depth].points.push_back(center);
 
@@ -117,6 +117,33 @@ namespace la3dm {
                 double h = (1.0 - std::min(std::max((z - min_z) / (max_z - min_z), 0.0f), 1.0f)) * 0.8;
                 msg->markers[depth].colors.push_back(heightMapColor(h));
             }
+        }
+
+        void insert_point3d(float x, float y, float z, float min_z, float max_z, float size, float prob) {
+            geometry_msgs::Point center;
+            center.x = x;
+            center.y = y;
+            center.z = z;
+
+            int depth = 0;
+            if (size > 0)
+                depth = (int) log2(size / resolution);
+
+            msg->markers[depth].points.push_back(center);
+
+            std_msgs::ColorRGBA color;
+            color.a = 1.0;
+
+            if(prob < 0.5){
+                color.r = 0.8; 
+                color.g = 0.8; 
+                color.b = 0.8; 
+            }
+            else{
+                color = heightMapColor(std::min(2.0-2.0*prob, 0.6));
+            }
+
+            msg->markers[depth].colors.push_back(color);
         }
 
         void insert_point3d(float x, float y, float z, float min_z, float max_z) {
@@ -150,7 +177,6 @@ namespace la3dm {
         void publish() const {
             msg->markers[0].header.stamp = ros::Time::now();
             pub.publish(*msg);
-            ros::spinOnce();
         }
 
     private:

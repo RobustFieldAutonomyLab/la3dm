@@ -341,19 +341,19 @@ namespace la3dm {
 
         ////////// Pruning //////////////////////////////
         /////////////////////////////////////////////////
-// #ifdef OPENMP
-// #pragma omp parallel for
-// #endif
-//         for (int i = 0; i < test_blocks.size(); ++i) {
-//             BlockHashKey key = test_blocks[i];
-//             auto block = block_arr.find(key);
-//             if (block == block_arr.end())
-//                 continue;
-//             block->second->prune();
-//         }
-// #ifdef DEBUG
-//         Debug_Msg("Pruning done");
-// #endif
+#ifdef OPENMP
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < test_blocks.size(); ++i) {
+            BlockHashKey key = test_blocks[i];
+            auto block = block_arr.find(key);
+            if (block == block_arr.end())
+                continue;
+            block->second->prune();
+        }
+#ifdef DEBUG
+        Debug_Msg("Pruning done");
+#endif
         /////////////////////////////////////////////////
 
 

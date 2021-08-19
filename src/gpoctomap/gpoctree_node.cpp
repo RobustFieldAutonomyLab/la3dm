@@ -17,6 +17,7 @@ namespace la3dm {
     float Occupancy::occupied_thresh = 0.7f;
 
     Occupancy::Occupancy(float m, float var) : m_ivar(m / var), ivar(1.0f / var) {
+        classified = false;
         if (ivar < Occupancy::min_known_ivar)
             state = State::UNKNOWN;
         else {
@@ -33,6 +34,7 @@ namespace la3dm {
     }
 
     void Occupancy::update(float new_m, float new_var) {
+        classified = true;
         ivar += 1.0 / new_var - Occupancy::sf2;
         m_ivar += new_m / new_var;
         if (ivar < Occupancy::min_known_ivar)

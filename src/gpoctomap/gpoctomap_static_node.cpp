@@ -23,6 +23,7 @@ int main(int argc, char **argv) {
     std::string prefix;
     int scan_num = 0;
     std::string map_topic("/occupied_cells_vis_array");
+    std::string map_topic2("/free_cells_vis_array");
     double max_range = -1;
     double resolution = 0.1;
     int block_depth = 4;
@@ -44,6 +45,7 @@ int main(int argc, char **argv) {
     nh.param<std::string>("dir", dir, dir);
     nh.param<std::string>("prefix", prefix, prefix);
     nh.param<std::string>("topic", map_topic, map_topic);
+    nh.param<std::string>("topic2", map_topic2, map_topic2);
     nh.param<int>("scan_num", scan_num, scan_num);
     nh.param<double>("max_range", max_range, max_range);
     nh.param<double>("resolution", resolution, resolution);
@@ -101,48 +103,21 @@ int main(int argc, char **argv) {
     ros::Time end = ros::Time::now();
     ROS_INFO_STREAM("Mapping finished in " << (end - start).toSec() << "s");
 
-    ///////// Compute Frontiers /////////////////////
-    // ROS_INFO_STREAM("Computing frontiers");
-    // la3dm::MarkerArrayPub f_pub(nh, "frontier_map", resolution);
-    // for (auto it = map.begin_leaf(); it != map.end_leaf(); ++it) {
-    //     la3dm::point3f p = it.get_loc();
-    //     if (p.z() > 1.0 || p.z() < 0.3)
-    //         continue;
-
-
-    //     if (it.get_node().get_var() > 0.02 &&
-    //         it.get_node().get_prob() < 0.3) {
-    //         f_pub.insert_point3d(p.x(), p.y(), p.z());
-    //     }
-    // }
-    // f_pub.publish();
-
-    //////// Test Raytracing //////////////////
-    la3dm::MarkerArrayPub ray_pub(nh, "/ray", resolution);
-    la3dm::GPOctoMap::RayCaster ray(&map, la3dm::point3f(1, 1, 0.3), la3dm::point3f(6, 7, 8));
-    while (!ray.end()) {
-        la3dm::point3f p;
-        la3dm::OcTreeNode node;
-        la3dm::BlockHashKey block_key;
-        la3dm::OcTreeHashKey node_key;
-        if (ray.next(p, node, block_key, node_key)) {
-            ray_pub.insert_point3d(p.x(), p.y(), p.z());
-        }
-    }
-    ray_pub.publish();
-
     ///////// Publish Map /////////////////////
-    la3dm::MarkerArrayPub m_pub(nh, map_topic, 0.1f);
+    la3dm::MarkerArrayPub m_pub(nh, map_topic, resolution);
+    la3dm::MarkerArrayPub m_pub2(nh, map_topic2, resolution);
     if (min_z == max_z) {
         la3dm::point3f lim_min, lim_max;
         map.get_bbox(lim_min, lim_max);
         min_z = lim_min.z();
         max_z = lim_max.z();
     }
+
     for (auto it = map.begin_leaf(); it != map.end_leaf(); ++it) {
+        la3dm::point3f p = it.get_loc();
+        
         if (it.get_node().get_state() == la3dm::State::OCCUPIED) {
             if (original_size) {
-                la3dm::point3f p = it.get_loc();
                 m_pub.insert_point3d(p.x(), p.y(), p.z(), min_z, max_z, it.get_size());
             } else {
                 auto pruned = it.get_pruned_locs();
@@ -150,9 +125,20 @@ int main(int argc, char **argv) {
                     m_pub.insert_point3d(n->x(), n->y(), n->z(), min_z, max_z, map.get_resolution());
             }
         }
+        else if (it.get_node().get_state() == la3dm::State::FREE) {
+            if (original_size) {
+                m_pub2.insert_point3d(p.x(), p.y(), p.z(), min_z, max_z, it.get_size(), it.get_node().get_prob());
+            } else {
+                auto pruned = it.get_pruned_locs();
+                for (auto n = pruned.cbegin(); n < pruned.cend(); ++n)
+                    m_pub2.insert_point3d(n->x(), n->y(), n->z(), min_z, max_z, map.get_resolution(), it.get_node().get_prob());
+            }
+            
+        }
     }
 
     m_pub.publish();
+    m_pub2.publish();
     ros::spin();
 
     return 0;

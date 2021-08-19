@@ -24,9 +24,11 @@ add_definitions(-DOPENMP)
 find_package(catkin REQUIRED COMPONENTS
         geometry_msgs
         visualization_msgs
+	pcl_conversions
         nav_msgs
         pcl_ros
         roscpp
+	sensor_msgs
         octomap_ros
 )
 
@@ -101,7 +103,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-#  CATKIN_DEPENDS geometry_msgs pcl_ros roscpp
+  LIBRARIES la3dm
+  #CATKIN_DEPENDS pcl_ros octomap_ros geometry_msgs visualization_msgs roscpp
 #  DEPENDS system_lib
 )
 
@@ -115,6 +118,8 @@ catkin_package(
 include_directories(
         include/gpoctomap
         include/bgkoctomap
+        include/bgkloctomap
+	include/bgklvoctomap
         include/common
         ${catkin_INCLUDE_DIRS}
         ${OCTOMAP_INCLUDE_DIRS}
@@ -126,25 +131,55 @@ include_directories(
 # )
 
 # Common source files
-set(COMMON_SOURCE_FILES src/common/point3f)
+set(COMMON_SOURCE_FILES
+  src/common/point3f.cpp
+  src/common/point6f.cpp)
+
+# Files for BGKL source
+set(BGKLV_SOURCE_FILES
+  src/bgklvoctomap/bgklvblock.cpp
+  src/bgklvoctomap/bgklvoctomap.cpp
+  src/bgklvoctomap/bgklvoctree_node.cpp
+  src/bgklvoctomap/bgklvoctree.cpp
+)
+
+# Files for BGKL source
+set(BGKL_SOURCE_FILES
+  src/bgkloctomap/bgklblock.cpp
+  src/bgkloctomap/bgkloctomap.cpp
+  src/bgkloctomap/bgkloctree_node.cpp
+  src/bgkloctomap/bgkloctree.cpp
+)
 
 # Files for BGK source
 set(BGK_SOURCE_FILES
-    src/bgkoctomap/bgkblock.cpp
-    src/bgkoctomap/bgkoctomap.cpp
-    src/bgkoctomap/bgkoctree_node.cpp
-    src/bgkoctomap/bgkoctree.cpp)
-
+  src/bgkoctomap/bgkblock.cpp
+  src/bgkoctomap/bgkoctomap.cpp
+  src/bgkoctomap/bgkoctree_node.cpp
+  src/bgkoctomap/bgkoctree.cpp
+)
 
 # Files for GP source
 set(GP_SOURCE_FILES
-        src/gpoctomap/gpblock.cpp
-        src/gpoctomap/gpoctomap.cpp
-        src/gpoctomap/gpoctree_node.cpp
-        src/gpoctomap/gpoctree.cpp
+  src/gpoctomap/gpblock.cpp
+  src/gpoctomap/gpoctomap.cpp
+  src/gpoctomap/gpoctree_node.cpp
+  src/gpoctomap/gpoctree.cpp
 )
 
-add_executable(bgkoctomap_static_node 
+add_executable(bgklvoctomap_static_node
+    ${BGKLV_SOURCE_FILES}
+    ${COMMON_SOURCE_FILES}
+    src/bgklvoctomap/bgklvoctomap_static_node.cpp
+)
+
+add_executable(bgkloctomap_static_node
+    ${BGKL_SOURCE_FILES}
+    ${COMMON_SOURCE_FILES}
+    src/bgkloctomap/bgkloctomap_static_node.cpp
+)
+
+add_executable(bgkoctomap_static_node
     ${BGK_SOURCE_FILES}
     ${COMMON_SOURCE_FILES}
     src/bgkoctomap/bgkoctomap_static_node.cpp
@@ -156,16 +191,25 @@ add_executable(gpoctomap_static_node
     src/gpoctomap/gpoctomap_static_node.cpp
 )
 
-add_executable(octomap_static_node
-    src/octomap/octomap_static_node.cpp)
+add_executable(bgklvoctomap_server
+    ${BGKLV_SOURCE_FILES}
+    ${COMMON_SOURCE_FILES}
+    src/bgklvoctomap/bgklvoctomap_server.cpp
+)
 
-add_executable(bgkoctomap_server 
+add_executable(bgkloctomap_server
+    ${BGKL_SOURCE_FILES}
+    ${COMMON_SOURCE_FILES}
+    src/bgkloctomap/bgkloctomap_server.cpp
+)
+
+add_executable(bgkoctomap_server
     ${BGK_SOURCE_FILES}
     ${COMMON_SOURCE_FILES}
     src/bgkoctomap/bgkoctomap_server.cpp
 )
 
-add_executable(gpoctomap_server 
+add_executable(gpoctomap_server
     ${GP_SOURCE_FILES}
     ${COMMON_SOURCE_FILES}
     src/gpoctomap/gpoctomap_server.cpp
@@ -176,6 +220,14 @@ add_executable(gpoctomap_server
 # add_dependencies(BGKOctoMap_node BGKOctoMap_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
+target_link_libraries(bgklvoctomap_static_node
+        ${catkin_LIBRARIES}
+)
+
+target_link_libraries(bgkloctomap_static_node
+        ${catkin_LIBRARIES}
+)
+
 target_link_libraries(bgkoctomap_static_node
         ${catkin_LIBRARIES}
 )
@@ -184,9 +236,12 @@ target_link_libraries(gpoctomap_static_node
         ${catkin_LIBRARIES}
 )
 
-target_link_libraries(octomap_static_node
+target_link_libraries(bgklvoctomap_server
         ${catkin_LIBRARIES}
-        ${OCTOMAP_LIBRARIES}
+)
+
+target_link_libraries(bgkloctomap_server
+        ${catkin_LIBRARIES}
 )
 
 target_link_libraries(bgkoctomap_server
@@ -196,6 +251,8 @@ target_link_libraries(bgkoctomap_server
 target_link_libraries(gpoctomap_server
         ${catkin_LIBRARIES}
 )
+
+link_directories(/usr/local/lib)
 
 #############
 ## Install ##

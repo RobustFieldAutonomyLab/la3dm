@@ -8,5 +8,5 @@ max_range: 8 # Sensor max range (m)
 min_z: 0
 max_z: 4.3
 
-original_size: true
+original_size: false
 predict: false

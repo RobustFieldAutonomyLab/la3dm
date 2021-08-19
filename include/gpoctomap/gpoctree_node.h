@@ -31,7 +31,7 @@ namespace la3dm {
         /*
          * @brief Constructors and destructor.
          */
-        Occupancy() : m_ivar(0.0), ivar(Occupancy::min_ivar), state(State::UNKNOWN) { }
+        Occupancy() : m_ivar(0.0), ivar(Occupancy::min_ivar), state(State::UNKNOWN) { classified = false; }
 
         Occupancy(float m, float var);
 
@@ -72,6 +72,8 @@ namespace la3dm {
         inline bool operator==(const Occupancy &rhs) const {
             return this->state != State::UNKNOWN && this->state == rhs.state;
         }
+
+        bool classified;
 
     private:
         float m_ivar;  // m / var or m * ivar

@@ -1,35 +1,22 @@
 <launch>
-    <!-- la3dm_static -->
+    <!-- la3dm_server -->
     <!-- Sets up an la3dm node with parameters specified by args -->
     <!-- See la3dm/config/methods/bgkoctomap.yaml for config parameters -->
-    <arg name="method" default="bgkoctomap"/>
 
-    <!-- 
-        Choose world:
-        - sim_structured
-        - sim_unstructured
-     -->
-    <arg name="data" value="$(find la3dm)/data"/>
+    <!-- Define transform between sensor and map as needed -->
+    <node pkg="tf" type="static_transform_publisher" name="static_transform_publisher" args="0 0 0 0 0 0 odom map 50"/>
+    <node pkg="tf" type="static_transform_publisher" name="static_transform_publisher2" args="0 0 0 0 0 0 base_link velodyne 50"/>
 
-    <arg name="dataset" default="sim_structured"/>
-    <arg name="dir" value="$(arg data)/$(arg dataset)"/>
+    <param name="/use_sim_time" value="true"/>
 
-    <arg name="prefix" default="$(arg dataset)"/>
-
+    <arg name="method" default="bgklvoctomap"/>
     <arg name="method_config" value="$(find la3dm)/config/methods"/>
-    <arg name="data_config" value="$(find la3dm)/config/datasets/"/>
 
     <!--Start the LA3DM node -->
     <node pkg="la3dm" type="$(arg method)_server" name="la3dm_server" output="screen">
 
-        <param name="dir" value="$(arg dir)"/>
-        <param name="prefix" value="$(arg prefix)"/>
-
         <!-- Load method configuration from file -->
-        <rosparam file="$(arg method_config)/$(arg method).yaml" command="load"/>
-
-        <!-- Load dataset configuration from file -->
-        <rosparam file="$(arg data_config)/$(arg dataset).yaml" command="load"/>
+        <rosparam file="$(arg method_config)/$(arg method)_large_map.yaml" command="load"/>
         
     </node>
 
