@@ -116,6 +116,9 @@ int main(int argc, char **argv) {
     for (auto it = map.begin_leaf(); it != map.end_leaf(); ++it) {
         la3dm::point3f p = it.get_loc();
 
+        if(p.z() > 2.0)
+        continue;
+
         if (it.get_node().get_state() == la3dm::State::OCCUPIED) {
             if (original_size) {
                 m_pub.insert_point3d(p.x(), p.y(), p.z(), min_z, max_z, it.get_size());

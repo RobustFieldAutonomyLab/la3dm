@@ -116,19 +116,20 @@ namespace la3dm {
                     }
                     else {
                         double c1 = pnt_vec.dot(line_vec);
+                        double c2 = line_vec.dot(line_vec);
                         if ( c1 <= 0) {
                             d(i,j) = (p - p0).norm();
                         }
-                        double c2 = line_vec.dot(line_vec);
-                        if (c2 <= c1) {
+                        else if (c2 <= c1) {
                             d(i,j) = (p - p1).norm();
                         }
+                        else{
                         double b = c1 / c2;
                         nearest = p0 + (line_vec*b);
                         d(i,j) = (p - nearest).norm();
+                        }
                     }
-
-                    }
+                }
             }
         }
 

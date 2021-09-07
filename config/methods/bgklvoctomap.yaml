@@ -1,16 +1,16 @@
-# BGKLOctoMap config
+# BGKLVOctoMap config
 
 # Map topic, grid cell mininum resolution
 topic: /occupied_cells_vis_array
 resolution: 0.1
-block_depth: 3 # Test-data octree depth (see Wang & Englot ICRA 2016)
+block_depth: 5 # Test-data octree depth (see Wang & Englot ICRA 2016)
 
 # Kernel parameters
 sf2: 0.1 # Actually sigma_0 in sparse kernel
 ell: 0.2 # Length scale of the sparse kernel
 
 # Sampling resolutions
-free_resolution: 0.3 # Free space sampling res
+free_resolution: 0.1 # Free space sampling res
 ds_resolution: 0.1  # Downsampling factor
 
 # Free/Occupied Thresholds
@@ -20,4 +20,5 @@ occupied_thresh: 0.7
 # BGK Inference positive and negative class prior pseudocounts
 prior_A: 0.001 # Positive class (occupied)
 prior_B: 0.001 # Negative class (unoccupied)
-var_thresh: 0.15 # Threshold on variance to distinguish known/unknown
+var_thresh: 0.2 # Threshold on variance to distinguish known/unknown
+min_W: 0.001 #minimum unknown threshold

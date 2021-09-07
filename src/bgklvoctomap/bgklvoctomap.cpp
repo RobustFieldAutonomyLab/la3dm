@@ -306,9 +306,6 @@ namespace la3dm {
         PCLPointCloud sampled_hits;
         downsample(cloud, sampled_hits, ds_resolution);
 
-        PCLPointCloud frees;
-        frees.height = 1;
-        frees.width = 0;
         rays.clear();
         ray_idx.clear();
         xy.clear();
@@ -405,15 +402,14 @@ namespace la3dm {
                 free_origin = free_endpt;
             }
 
-            PointCloud frees_n;
-            beam_sample(free_endpt, free_origin, frees_n, free_resolution);
+            PointCloud frees;
+            beam_sample(free_endpt, free_origin, frees, free_resolution);
 
-            frees.push_back(PCLPointType(free_origin.x(), free_origin.y(), free_origin.z()));
             xy.emplace_back(point6f(free_origin.x(), free_origin.y(), free_origin.z()), 0.0f);
             ray_idx.push_back(idx);
 
             //plaxeholder points along the ray used to check if a ray is near a cell -> yes means use this ray
-            for (auto p = frees_n.begin(); p != frees_n.end(); ++p) {
+            for (auto p = frees.begin(); p != frees.end(); ++p) {
                 xy.emplace_back(point6f(p->x(), p->y(), p->z()), 0.0f);
                 ray_idx.push_back(idx);
             }
@@ -421,7 +417,6 @@ namespace la3dm {
             point6f line6f(free_origin, free_endpt);
             rays.emplace_back(line6f, 0.0f);
 
-            frees.clear();
             ++idx;
         }
 

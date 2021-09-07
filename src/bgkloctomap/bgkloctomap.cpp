@@ -95,7 +95,7 @@ namespace la3dm {
         // const int ray_size = rays.size();
         // std::array<int, ray_size> ray_keys;
         get_training_data(cloud, origin, ds_resolution, free_res, max_range, xy, rays, ray_idx);
-        vector<int> ray_keys(rays.size(), 0);
+        // vector<int> ray_keys(rays.size(), 0);
         assert (ray_idx.size() == xy.size());
         // std::cout << "N rays: " << rays.size() << std::endl;
         // std::cout << "vec size: " << ray_keys.size() << std::endl;
@@ -142,6 +142,7 @@ namespace la3dm {
             if (xy_idx.size() < 1)
                 continue;
 
+            vector<int> ray_keys(rays.size(), 0);
             vector<float> block_x, block_y;
             for (int j = 0; j < xy_idx.size(); ++j) {
 #ifdef OPENMP
@@ -331,7 +332,9 @@ namespace la3dm {
                 xy.emplace_back(point6f(p->x(), p->y(), p->z()), 0.0f);
                 ray_idx.push_back(idx);
             }
-            point6f line6f(origin, point3f(xy.back().first.x0(), xy.back().first.y0(), xy.back().first.z0()));
+            l = l - free_resolution;
+            point3f free_endpt(origin.x() + nx * l, origin.y() + ny * l, origin.z() + nz * l);
+            point6f line6f(origin, free_endpt);
             rays.emplace_back(line6f, 0.0f);
 
             frees.clear();
