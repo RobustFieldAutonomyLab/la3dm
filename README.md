@@ -1,7 +1,7 @@
 # Learning-Aided 3D Mapping
 [![Build Status](https://travis-ci.org/RobustFieldAutonomyLab/la3dm.svg?branch=master)](https://travis-ci.org/RobustFieldAutonomyLab/la3dm)
 
-A suite of algorithms for learning-aided mapping. Includes implementations of Gaussian process regression and Bayesian generalized kernel inference for occupancy prediction using test-data octrees. 
+A suite of algorithms for learning-aided mapping. Includes implementations of Gaussian process regression and Bayesian generalized kernel inference for occupancy prediction using test-data octrees. A demonstration of the system can be found here: https://youtu.be/SRXLMALpU20
 
 ## Overview
 
@@ -50,7 +50,7 @@ $ roslaunch la3dm la3dm_static.launch method:=gpoctomap dataset:=sim_unstructure
 
 If you found this code useful, please cite the following:
 
-Improving Obstacle Boundary Representations in Predictive Occupancy Mapping([PDF](https://www.sciencedirect.com/science/article/abs/pii/S0921889022000380))
+Improving Obstacle Boundary Representations in Predictive Occupancy Mapping ([PDF](https://www.sciencedirect.com/science/article/abs/pii/S0921889022000380)) - describes the latest BGKOctoMap-LV addition to the LA3DM library:
 
 ```
 @article{pearson2022improving,
@@ -64,7 +64,7 @@ Improving Obstacle Boundary Representations in Predictive Occupancy Mapping([PDF
 }
 ```
 
-Learning-Aided 3-D Occupancy Mapping with Bayesian Generalized Kernel Inference ([PDF](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8713569))
+Learning-Aided 3-D Occupancy Mapping with Bayesian Generalized Kernel Inference ([PDF](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8713569)) - describes the BGKOctoMap and BGKOctoMap-L approaches originally included in the LA3DM library.
 ```
 @article{Doherty2019,
   doi = {10.1109/tro.2019.2912487},
@@ -78,7 +78,7 @@ Learning-Aided 3-D Occupancy Mapping with Bayesian Generalized Kernel Inference 
 }
 ```
 
-Fast, accurate gaussian process occupancy maps via test-data octrees and nested Bayesian fusion ([PDF](http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7487232))
+Fast, accurate gaussian process occupancy maps via test-data octrees and nested Bayesian fusion ([PDF](http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7487232)) - describes the GPOctoMap approach included in the LA3DM library.
 ```
 @INPROCEEDINGS{JWang-ICRA-16,
 author={J. Wang and B. Englot},
@@ -103,4 +103,4 @@ month={May},
 
 ## Contributors
 
-Jinkun Wang, Kevin Doherty and Erik Pearson, [Robust Field Autonomy Lab (RFAL)](https://robustfieldautonomylab.github.io/), Stevens Institute of Technology.
+Jinkun Wang, Kevin Doherty, and Erik Pearson, [Robust Field Autonomy Lab (RFAL)](https://robustfieldautonomylab.github.io/), Stevens Institute of Technology.
