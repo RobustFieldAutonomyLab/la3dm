@@ -2,6 +2,7 @@
     <!-- la3dm_static -->
     <!-- Sets up an la3dm node with parameters specified by args -->
     <!-- See la3dm/config/methods/bgkoctomap.yaml for config parameters -->
+    <arg name="rviz" default="true" />
     <arg name="method" default="bgklvoctomap"/>
 
     <!-- 
@@ -18,6 +19,12 @@
 
     <arg name="method_config" value="$(find la3dm)/config/methods"/>
     <arg name="data_config" value="$(find la3dm)/config/datasets/"/>
+    
+    <!--Start RVIZ-->
+    <node name="rviz_map" pkg="rviz" type="rviz"
+        args="-d $(find la3dm)/rviz/$(arg dataset).rviz"
+        if="$(arg rviz)">
+    </node>
 
     <!--Start the LA3DM node -->
     <node pkg="la3dm" type="$(arg method)_static_node" name="la3dm_static" output="screen">
