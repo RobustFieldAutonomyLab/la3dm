@@ -11,24 +11,20 @@ This implementation as it stands now is primarily intended to enable replication
 
 ### Dependencies
 
-We tested LA3DM with ROS Kinetic, but it also works with ROS Indigo, just ensure you have the correct dependencies by running:
+The current package runs with ROS Noetic, but for testing in ROS Kinetic and ROS Indigo, you can set the CMAKE flag in the CMAKELists file to c++11.
+
+Octomap is a dependancy, which can be installed using the command below. Change distribution as necessary.
 
 ```bash
-$ sudo apt-get install ros-kinetic-octomap*
+$ sudo apt-get install ros-noetic-octomap*
 ```
-if you're using ROS Kinetic, or:
-
-```bash
-$ sudo apt-get install ros-indigo-octomap*
-```
-if you're using Indigo.
 
 ### Building with catkin
 
 The repository is set up to work with catkin, so to get started you can clone the repository into your catkin workspace `src` folder and compile with `catkin_make`:
 
 ```bash
-my_catkin_workspace/src$ git clone https://github.com/RobustFieldAutonomyLab/la3dm
+my_catkin_workspace/src$ git clone https://github.com/RobustFieldAutonomyLab/la3dm.git
 my_catkin_workspace/src$ cd ..
 my_catkin_workspace$ catkin_make
 my_catkin_workspace$ source ~/my_catkin_workspace/devel/setup.bash
@@ -53,6 +49,20 @@ $ roslaunch la3dm la3dm_static.launch method:=gpoctomap dataset:=sim_unstructure
 ## Relevant Publications
 
 If you found this code useful, please cite the following:
+
+Improving Obstacle Boundary Representations in Predictive Occupancy Mapping([PDF](https://www.sciencedirect.com/science/article/abs/pii/S0921889022000380))
+
+```
+@article{pearson2022improving,
+  title={Improving Obstacle Boundary Representations in Predictive Occupancy Mapping},
+  author={Pearson, Erik and Doherty, Kevin and Englot, Brendan},
+  journal={Robotics and Autonomous Systems},
+  volume={153},
+  pages={104077},
+  year={2022},
+  publisher={Elsevier}
+}
+```
 
 Learning-Aided 3-D Occupancy Mapping with Bayesian Generalized Kernel Inference ([PDF](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8713569))
 ```
@@ -93,4 +103,4 @@ month={May},
 
 ## Contributors
 
-Jinkun Wang, Kevin Doherty and Erik Pearson, [Robust Field Autonomy Lab (RFAL)](http://personal.stevens.edu/~benglot/index.html), Stevens Institute of Technology.
+Jinkun Wang, Kevin Doherty and Erik Pearson, [Robust Field Autonomy Lab (RFAL)](https://robustfieldautonomylab.github.io/), Stevens Institute of Technology.
