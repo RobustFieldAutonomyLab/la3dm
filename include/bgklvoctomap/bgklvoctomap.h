@@ -263,6 +263,7 @@ namespace la3dm {
                         end_leaf = block_it->second->end_leaf();
                     }
                 }
+                return *this;
             }
 
             OcTreeNode &operator*() const {
